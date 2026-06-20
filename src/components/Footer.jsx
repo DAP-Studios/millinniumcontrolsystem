@@ -31,7 +31,7 @@ export default function Footer() {
         <div className="footer-col">
           <h4>Solutions</h4>
           <ul>
-            <li><a href="#">e-F@ctory</a></li>
+            <li><a href="#">Smart Manufacturing</a></li>
             <li><a href="#">Industries</a></li>
             <li><a href="#">Competencies</a></li>
             <li><a href="#">Case Studies</a></li>
