@@ -66,6 +66,7 @@ export default function Footer() {
           <a href="#">Terms of Use</a>
           <a href="#">Cookie Policy</a>
           <a href="#">Sitemap</a>
+          <Link to="/admin" style={{ marginLeft: '12px', opacity: 0.6, fontSize: '11px', borderLeft: '1px solid #555', paddingLeft: '12px' }}>Admin Control</Link>
         </div>
       </div>
     </footer>
