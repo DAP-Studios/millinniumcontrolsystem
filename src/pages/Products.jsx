@@ -1,394 +1,646 @@
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useData } from '../context/DataContext';
+import useSEO from '../hooks/useSEO';
 
 export default function Products() {
   const navigate = useNavigate();
+  const { categories, products } = useData();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Search input state
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Selected category slug/id
+  const activeCategory = searchParams.get('category') || 'all';
+
+  // Dynamic SEO implementation
+  const activeCategoryObject = categories.find(c => c.id === activeCategory);
+  
+  const seoTitle = activeCategory === 'all'
+    ? 'Factory Automation Products Catalogue | Pune'
+    : `${activeCategoryObject?.name || 'Products'} Catalogue | Millennium Control System`;
+
+  const seoDescription = activeCategory === 'all'
+    ? 'Explore the full portfolio of factory automation equipment by Millennium Control System in Pune, India: PLCs, VFD inverters, servos, HMIs, network modules, and robotic cells.'
+    : activeCategoryObject?.description || 'Browse factory automation products and industrial control systems.';
+
+  const seoKeywords = activeCategory === 'all'
+    ? 'Factory Automation Pune, Mitsubishi PLC India, VFD Inverter, Servo Motor, HMI GOT, Industrial Robots, MCCB Switchgear, CC-Link IE TSN'
+    : `${activeCategoryObject?.name || 'Products'}, Mitsubishi ${activeCategoryObject?.name || 'Automation'}, Pune distributor, industrial integration`;
+
+  // CollectionPage JSON-LD Schema for advanced e-commerce crawlers
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": seoTitle,
+    "description": seoDescription,
+    "url": window.location.href,
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Millennium Control System Pvt. Ltd.",
+      "image": "/images/logo.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Industrial Area",
+        "addressLocality": "Pune",
+        "addressRegion": "Maharashtra",
+        "postalCode": "411026",
+        "addressCountry": "IN"
+      }
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": products.filter(p => activeCategory === 'all' || p.categorySlug === activeCategory).length,
+      "itemListElement": products
+        .filter(p => activeCategory === 'all' || p.categorySlug === activeCategory)
+        .map((product, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "url": `${window.location.origin}/products/${product.id}`,
+          "name": product.name,
+          "description": product.summary
+        }))
+    }
+  };
+
+  useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    schema: collectionSchema
+  });
+
+  const handleCategorySelect = (categoryId) => {
+    if (categoryId === 'all') {
+      searchParams.delete('category');
+    } else {
+      searchParams.set('category', categoryId);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const getProductCount = (categorySlug) => {
+    if (categorySlug === 'all') return products.length;
+    return products.filter(p => p.categorySlug === categorySlug).length;
+  };
+
+  // Determine dynamic hardware categories to render
+  const visibleHardwareCategories = categories
+    .filter(cat => cat.id !== 'software')
+    .filter(cat => {
+      const catProducts = products.filter(p => p.categorySlug === cat.id);
+      const filteredCatProducts = catProducts.filter(p => {
+        if (!searchQuery) return true;
+        return p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+               p.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+               p.description.toLowerCase().includes(searchQuery.toLowerCase());
+      });
+      return (activeCategory === 'all' || activeCategory === cat.id) && (filteredCatProducts.length > 0 || !searchQuery);
+    });
+
+  // Determine if Software Section should display
+  const shouldShowSoftware = (activeCategory === 'all' || activeCategory === 'software') && (() => {
+    const softwareProducts = products.filter(p => p.categorySlug === 'software');
+    const filteredSoftwareProducts = softwareProducts.filter(p => {
+      if (!searchQuery) return true;
+      return p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             p.summary.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+    return filteredSoftwareProducts.length > 0 || !searchQuery || 'software'.includes(searchQuery.toLowerCase());
+  })();
+
+  // Determine if Network Section should display
+  const shouldShowNetworks = activeCategory === 'all' && (() => {
+    if (!searchQuery) return true;
+    const keywords = ['network', 'tsn', 'cc-link', 'field', 'sscnet', 'fiber', 'ethernet'];
+    return keywords.some(k => searchQuery.toLowerCase().includes(k) || k.includes(searchQuery.toLowerCase()));
+  })();
+
+  const hasAnyContent = visibleHardwareCategories.length > 0 || shouldShowSoftware || shouldShowNetworks;
 
   return (
-    <div>
-      <div className="page-header">
-        <h1>Our Products</h1>
-        <p>Comprehensive factory automation solutions for global industries.</p>
+    <div className="products-page" style={{ paddingBottom: '80px', backgroundColor: '#fcfcfc' }}>
+      
+      {/* ── VISUAL HERO HEADER ── */}
+      <div className="c-mainVisual" style={{
+        background: 'linear-gradient(135deg, #0d1e3d, #1a2f56)',
+        color: '#fff',
+        padding: '65px 24px',
+        position: 'relative',
+        overflow: 'hidden',
+        textAlign: 'center',
+        borderBottom: '4px solid #e60012'
+      }}>
+        <div className="hero-pattern" style={{
+          opacity: 0.08,
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}></div>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', margin: '0 auto' }}>
+          <span style={{
+            background: '#e60012',
+            color: '#fff',
+            padding: '4px 14px',
+            fontSize: '11px',
+            fontWeight: '700',
+            borderRadius: '2px',
+            textTransform: 'uppercase',
+            letterSpacing: '1.5px',
+            display: 'inline-block',
+            marginBottom: '12px'
+          }}>
+            Factory Automation Solutions
+          </span>
+          <h1 style={{ fontSize: '38px', fontWeight: '800', margin: '0 0 10px 0', letterSpacing: '-0.5px' }}>
+            Products Portfolio
+          </h1>
+          <p style={{ color: '#cbd5e1', fontSize: '15px', maxWidth: '650px', margin: '0 auto', lineHeight: '1.6' }}>
+            Introducing Millennium Control System FA product lineup. We offer advanced components and custom integration solutions across India.
+          </p>
+        </div>
       </div>
 
-      <section className="products" id="products">
-        <div className="products-inner">
-          <div className="section-head">
-            <div className="section-title">Products Lineup</div>
-            <div style={{width:'120px', height:'4px', borderRadius:'2px', background:'linear-gradient(to right,#e60012 33%,#ddd 33%)', margin:'8px auto 0'}}></div>
-          </div>
-          <div className="products-grid" style={{marginTop:'32px'}}>
-            
-            <div className="product-card" onClick={() => navigate('/products/industrial-computer')}>
-              <div className="product-card-img prod-img-ic">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="10" y="15" width="90" height="70" rx="3" fill="#555" stroke="#444" strokeWidth="1"/>
-                  <rect x="14" y="19" width="82" height="58" rx="2" fill="#222"/>
-                  <rect x="18" y="23" width="74" height="42" rx="1" fill="#1a1a2e"/>
-                  <text x="55" y="48" textAnchor="middle" fill="#4488ff" fontSize="9" fontFamily="monospace">MELIPC</text>
-                  <rect x="18" y="50" width="40" height="4" rx="1" fill="#4488ff" opacity=".6"/>
-                  <rect x="18" y="56" width="28" height="3" rx="1" fill="#4488ff" opacity=".4"/>
-                  <rect x="108" y="20" width="38" height="60" rx="2" fill="#666" stroke="#555" strokeWidth="1"/>
-                  <rect x="112" y="26" width="30" height="20" rx="1" fill="#444"/>
-                  <rect x="114" y="50" width="8" height="4" rx="1" fill="#888"/>
-                  <rect x="126" y="50" width="8" height="4" rx="1" fill="#888"/>
-                  <rect x="112" y="58" width="30" height="6" rx="1" fill="#555"/>
-                  <rect x="112" y="67" width="30" height="6" rx="1" fill="#555"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">Industrial Computer</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/controllers')}>
-              <div className="product-card-img prod-img-ctrl">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="15" y="20" width="50" height="75" rx="2" fill="#cc0000"/>
-                  <rect x="18" y="24" width="44" height="12" rx="1" fill="#aa0000"/>
-                  <rect x="20" y="38" width="8" height="6" rx="1" fill="#ff4444"/>
-                  <rect x="30" y="38" width="8" height="6" rx="1" fill="#ffaa00"/>
-                  <rect x="40" y="38" width="8" height="6" rx="1" fill="#00cc44"/>
-                  <rect x="18" y="48" width="44" height="44" rx="1" fill="#aa0000"/>
-                  <rect x="22" y="52" width="36" height="6" rx="1" fill="#cc0000"/>
-                  <rect x="70" y="20" width="35" height="32" rx="2" fill="#444"/>
-                  <rect x="72" y="22" width="31" height="10" rx="1" fill="#333"/>
-                  <rect x="74" y="34" width="6" height="4" rx="1" fill="#666"/>
-                  <rect x="82" y="34" width="6" height="4" rx="1" fill="#666"/>
-                  <rect x="90" y="34" width="6" height="4" rx="1" fill="#666"/>
-                  <rect x="70" y="56" width="35" height="32" rx="2" fill="#555"/>
-                  <rect x="72" y="58" width="31" height="10" rx="1" fill="#444"/>
-                  <rect x="110" y="20" width="30" height="68" rx="2" fill="#cc0000"/>
-                  <rect x="112" y="24" width="26" height="10" rx="1" fill="#aa0000"/>
-                  <rect x="114" y="36" width="22" height="48" rx="1" fill="#aa0000"/>
-                  <rect x="116" y="40" width="4" height="4" rx="1" fill="#ff6666"/>
-                  <rect x="122" y="40" width="4" height="4" rx="1" fill="#ff6666"/>
-                  <rect x="128" y="40" width="4" height="4" rx="1" fill="#ffaa00"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix plus">+</span>
-                <span>Controllers</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/cnc')}>
-              <div className="product-card-img prod-img-cnc">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="10" y="15" width="140" height="85" rx="3" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="15" y="20" width="80" height="55" rx="2" fill="#1a1a1a"/>
-                  <rect x="18" y="23" width="74" height="46" rx="1" fill="#0a0a1a"/>
-                  <line x1="22" y1="38" x2="88" y2="38" stroke="#00aaff" strokeWidth="1" opacity=".7"/>
-                  <line x1="22" y1="28" x2="88" y2="28" stroke="#00ff88" strokeWidth="1" opacity=".5"/>
-                  <path d="M22 48 L30 42 L42 50 L54 40 L66 46 L78 38 L88 44" fill="none" stroke="#4488ff" strokeWidth="1.5"/>
-                  <rect x="100" y="22" width="44" height="50" rx="2" fill="#333"/>
-                  <rect x="104" y="26" width="16" height="10" rx="1" fill="#444"/>
-                  <rect x="124" y="26" width="16" height="10" rx="1" fill="#444"/>
-                  <rect x="104" y="40" width="10" height="8" rx="1" fill="#cc0000"/>
-                  <rect x="118" y="40" width="10" height="8" rx="1" fill="#555"/>
-                  <rect x="132" y="40" width="8" height="8" rx="1" fill="#555"/>
-                  <rect x="104" y="52" width="36" height="16" rx="2" fill="#222"/>
-                  <rect x="108" y="56" width="6" height="6" rx="1" fill="#444"/>
-                  <rect x="116" y="56" width="6" height="6" rx="1" fill="#444"/>
-                  <rect x="124" y="56" width="6" height="6" rx="1" fill="#444"/>
-                  <rect x="132" y="56" width="6" height="6" rx="1" fill="#444"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">Computerized Numerical Controllers(CNCs)</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/fa-sensor')}>
-              <div className="product-card-img prod-img-sensor">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="20" y="30" width="60" height="55" rx="4" fill="#333" stroke="#444" strokeWidth="1"/>
-                  <rect x="24" y="34" width="52" height="20" rx="2" fill="#222"/>
-                  <circle cx="50" cy="62" r="18" fill="#222" stroke="#555" strokeWidth="1"/>
-                  <circle cx="50" cy="62" r="12" fill="#1a1a1a" stroke="#444" strokeWidth="1"/>
-                  <circle cx="50" cy="62" r="6" fill="#111"/>
-                  <circle cx="47" cy="59" r="1.5" fill="rgba(255,255,255,.4)"/>
-                  <rect x="24" y="36" width="8" height="4" rx="1" fill="#cc0000"/>
-                  <rect x="35" y="36" width="4" height="4" rx="1" fill="#00aa44"/>
-                  <rect x="90" y="25" width="18" height="65" rx="2" fill="#444" stroke="#555" strokeWidth="1"/>
-                  <circle cx="99" cy="45" r="7" fill="#222" stroke="#555" strokeWidth="1"/>
-                  <circle cx="99" cy="45" r="4" fill="#111"/>
-                  <rect x="94" y="58" width="10" height="4" rx="1" fill="#cc0000"/>
-                  <rect x="115" y="35" width="14" height="50" rx="2" fill="#555" stroke="#666" strokeWidth="1"/>
-                  <rect x="118" y="42" width="8" height="8" rx="1" fill="#333"/>
-                  <rect x="118" y="54" width="8" height="4" rx="1" fill="#cc0000"/>
-                  <rect x="135" y="38" width="12" height="44" rx="2" fill="#666" stroke="#777" strokeWidth="1"/>
-                  <circle cx="141" cy="58" r="5" fill="#333" stroke="#555" strokeWidth="1"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">FA Sensor</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/drive-products')}>
-              <div className="product-card-img prod-img-drive">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="8" y="18" width="48" height="70" rx="2" fill="#1a1a2a" stroke="#333" strokeWidth="1"/>
-                  <rect x="12" y="22" width="40" height="14" rx="1" fill="#cc0000"/>
-                  <text x="32" y="32" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="sans-serif" fontWeight="bold">FREQROL</text>
-                  <rect x="12" y="40" width="40" height="24" rx="1" fill="#111"/>
-                  <rect x="16" y="44" width="32" height="10" rx="1" fill="#1a1a2a"/>
-                  <rect x="16" y="56" width="10" height="4" rx="1" fill="#444"/>
-                  <rect x="28" y="56" width="10" height="4" rx="1" fill="#cc0000"/>
-                  <rect x="40" y="56" width="8" height="4" rx="1" fill="#444"/>
-                  <rect x="12" y="68" width="40" height="16" rx="1" fill="#222"/>
-                  <ellipse cx="110" cy="75" rx="18" ry="28" fill="#555" stroke="#666" strokeWidth="1"/>
-                  <ellipse cx="110" cy="75" rx="12" ry="22" fill="#444"/>
-                  <rect x="70" y="68" width="25" height="14" rx="2" fill="#666" stroke="#777" strokeWidth="1"/>
-                  <rect x="73" y="70" width="19" height="10" rx="1" fill="#555"/>
-                  <rect x="128" y="72" width="22" height="6" rx="3" fill="#777"/>
-                  <rect x="8" y="92" width="48" height="20" rx="2" fill="#333" stroke="#444" strokeWidth="1"/>
-                  <rect x="12" y="95" width="8" height="14" rx="1" fill="#1a1a1a"/>
-                  <rect x="22" y="95" width="8" height="14" rx="1" fill="#cc0000"/>
-                  <rect x="32" y="95" width="8" height="14" rx="1" fill="#1a1a1a"/>
-                  <rect x="42" y="95" width="10" height="14" rx="1" fill="#222"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix plus">+</span>
-                <span>Drive Products</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/hmi')}>
-              <div className="product-card-img prod-img-hmi">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="10" y="15" width="100" height="75" rx="4" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="15" y="20" width="90" height="60" rx="2" fill="#0a0a1a"/>
-                  <line x1="20" y1="72" x2="100" y2="72" stroke="#333" strokeWidth="1"/>
-                  <line x1="20" y1="30" x2="20" y2="72" stroke="#333" strokeWidth="1"/>
-                  <path d="M25 65 L35 55 L45 62 L55 45 L65 58 L75 40 L85 52 L95 44" fill="none" stroke="#4488ff" strokeWidth="1.5"/>
-                  <path d="M25 68 L35 62 L45 68 L55 60 L65 65 L75 55 L85 60 L95 58" fill="none" stroke="#ff8844" strokeWidth="1.5"/>
-                  <rect x="118" y="20" width="36" height="55" rx="3" fill="#333" stroke="#444" strokeWidth="1"/>
-                  <rect x="122" y="24" width="28" height="38" rx="1" fill="#0a0a1a"/>
-                  <path d="M125 52 L130 44 L135 49 L140 38 L145 45" fill="none" stroke="#4488ff" strokeWidth="1.5"/>
-                  <rect x="125" y="64" width="22" height="6" rx="1" fill="#222"/>
-                  <rect x="50" y="90" width="20" height="4" rx="1" fill="#444"/>
-                  <rect x="35" y="94" width="50" height="4" rx="2" fill="#555"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">HMI</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/robots')}>
-              <div className="product-card-img prod-img-robot">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="55" y="88" width="50" height="16" rx="3" fill="#ddd" stroke="#ccc" strokeWidth="1"/>
-                  <rect x="70" y="76" width="20" height="14" rx="2" fill="#e8e8e8" stroke="#ccc" strokeWidth="1"/>
-                  <rect x="72" y="60" width="16" height="18" rx="2" fill="#ddd" stroke="#bbb" strokeWidth="1"/>
-                  <path d="M80 60 L65 44 L70 38 L82 52" fill="#e0e0e0" stroke="#ccc" strokeWidth="1"/>
-                  <path d="M80 52 L88 36 L94 40 L84 56" fill="#d8d8d8" stroke="#ccc" strokeWidth="1"/>
-                  <circle cx="80" cy="60" r="8" fill="#bbb" stroke="#aaa" strokeWidth="1"/>
-                  <circle cx="70" cy="44" r="6" fill="#ccc" stroke="#bbb" strokeWidth="1"/>
-                  <circle cx="88" cy="38" r="5" fill="#ccc" stroke="#bbb" strokeWidth="1"/>
-                  <path d="M88 36 L96 28 L100 32" fill="none" stroke="#aaa" strokeWidth="2"/>
-                  <path d="M96 28 L104 22 L107 26" fill="none" stroke="#aaa" strokeWidth="2"/>
-                  <rect x="12" y="88" width="38" height="14" rx="2" fill="#f0f0f0" stroke="#ddd" strokeWidth="1"/>
-                  <rect x="22" y="72" width="18" height="18" rx="2" fill="#e8e8e8" stroke="#ddd" strokeWidth="1"/>
-                  <rect x="25" y="52" width="12" height="22" rx="6" fill="#e0e0e0" stroke="#ddd" strokeWidth="1"/>
-                  <circle cx="31" cy="44" r="8" fill="#d8d8d8" stroke="#ccc" strokeWidth="1"/>
-                  <rect x="25" y="36" width="12" height="10" rx="5" fill="#e0e0e0" stroke="#ddd" strokeWidth="1"/>
-                  <path d="M37 46 L46 40 L48 44 L40 52" fill="none" stroke="#ccc" strokeWidth="2"/>
-                  <path d="M48 42 L54 36" fill="none" stroke="#ccc" strokeWidth="2"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix plus">+</span>
-                <span>Robots</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/low-voltage-power')}>
-              <div className="product-card-img prod-img-lvd">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="8" y="18" width="45" height="80" rx="2" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="12" y="22" width="37" height="16" rx="1" fill="#1a1a1a"/>
-                  <rect x="14" y="24" width="8" height="6" rx="1" fill="#00aa44"/>
-                  <rect x="24" y="24" width="8" height="6" rx="1" fill="#cc0000"/>
-                  <rect x="34" y="24" width="10" height="6" rx="1" fill="#ffaa00"/>
-                  <rect x="18" y="44" width="22" height="48" rx="1" fill="#222"/>
-                  <rect x="22" y="48" width="14" height="36" rx="1" fill="#111"/>
-                  <rect x="25" y="52" width="8" height="10" rx="1" fill="#333"/>
-                  <rect x="60" y="22" width="38" height="45" rx="2" fill="#333" stroke="#555" strokeWidth="1"/>
-                  <rect x="63" y="25" width="32" height="14" rx="1" fill="#222"/>
-                  <rect x="66" y="28" width="10" height="6" rx="2" fill="#cc0000"/>
-                  <rect x="79" y="28" width="10" height="6" rx="2" fill="#444"/>
-                  <rect x="63" y="42" width="32" height="22" rx="1" fill="#1a1a1a"/>
-                  <rect x="67" y="46" width="6" height="10" rx="1" fill="#333"/>
-                  <rect x="75" y="46" width="6" height="10" rx="1" fill="#333"/>
-                  <rect x="83" y="46" width="6" height="10" rx="1" fill="#333"/>
-                  <rect x="105" y="18" width="46" height="55" rx="2" fill="#1a1a2a" stroke="#333" strokeWidth="1"/>
-                  <rect x="109" y="22" width="38" height="28" rx="1" fill="#0a0a1a"/>
-                  <text x="128" y="38" textAnchor="middle" fill="#00ff88" fontSize="12" fontFamily="monospace">1234</text>
-                  <text x="128" y="47" textAnchor="middle" fill="#4488ff" fontSize="7" fontFamily="monospace">kWh</text>
-                  <rect x="109" y="54" width="10" height="10" rx="1" fill="#cc0000"/>
-                  <rect x="122" y="54" width="10" height="10" rx="1" fill="#333"/>
-                  <rect x="135" y="54" width="12" height="10" rx="1" fill="#333"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix plus">+</span>
-                <span>Low-voltage Power Distribution Products</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/medium-voltage-power')}>
-              <div className="product-card-img prod-img-mvd">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="10" y="15" width="60" height="90" rx="2" fill="#1a1a2a" stroke="#333" strokeWidth="1"/>
-                  <rect x="15" y="20" width="50" height="20" rx="1" fill="#cc0000"/>
-                  <text x="40" y="33" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="sans-serif">MV PANEL</text>
-                  <rect x="15" y="44" width="50" height="55" rx="1" fill="#111"/>
-                  <circle cx="40" cy="68" r="15" fill="none" stroke="#4488ff" strokeWidth="2"/>
-                  <circle cx="40" cy="68" r="8" fill="none" stroke="#4488ff" strokeWidth="1.5"/>
-                  <circle cx="40" cy="68" r="3" fill="#4488ff"/>
-                  <rect x="18" y="86" width="8" height="8" rx="1" fill="#00aa44"/>
-                  <rect x="30" y="86" width="8" height="8" rx="1" fill="#cc0000"/>
-                  <rect x="42" y="86" width="8" height="8" rx="1" fill="#ffaa00"/>
-                  <rect x="80" y="20" width="70" height="90" rx="2" fill="#2a2a3a" stroke="#444" strokeWidth="1" opacity=".8"/>
-                  <rect x="85" y="28" width="28" height="35" rx="2" fill="#1a1a2a"/>
-                  <rect x="120" y="28" width="24" height="35" rx="2" fill="#1a1a2a"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">Medium-voltage Power Distribution Products</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/energy-saving')}>
-              <div className="product-card-img prod-img-energy">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="10" y="15" width="26" height="85" rx="2" fill="#cc4400" stroke="#aa3300" strokeWidth="1"/>
-                  <rect x="13" y="20" width="20" height="12" rx="1" fill="#aa3300"/>
-                  <rect x="15" y="34" width="16" height="10" rx="1" fill="#882200"/>
-                  <rect x="15" y="48" width="16" height="8" rx="1" fill="#aa3300"/>
-                  <rect x="15" y="60" width="16" height="8" rx="1" fill="#aa3300"/>
-                  <rect x="13" y="72" width="20" height="24" rx="1" fill="#882200"/>
-                  <rect x="40" y="20" width="26" height="80" rx="2" fill="#cc4400" stroke="#aa3300" strokeWidth="1"/>
-                  <rect x="43" y="24" width="20" height="12" rx="1" fill="#aa3300"/>
-                  <rect x="45" y="40" width="16" height="8" rx="1" fill="#882200"/>
-                  <rect x="45" y="52" width="16" height="8" rx="1" fill="#aa3300"/>
-                  <rect x="72" y="18" width="80" height="60" rx="3" fill="#1a1a2a" stroke="#333" strokeWidth="1"/>
-                  <rect x="76" y="22" width="72" height="32" rx="2" fill="#0a0f1a"/>
-                  <text x="112" y="42" textAnchor="middle" fill="#00ff88" fontSize="16" fontFamily="monospace">22.5</text>
-                  <text x="112" y="50" textAnchor="middle" fill="#4488ff" fontSize="8" fontFamily="monospace">kW</text>
-                  <rect x="76" y="58" width="16" height="8" rx="1" fill="#333"/>
-                  <rect x="95" y="58" width="16" height="8" rx="1" fill="#cc0000"/>
-                  <rect x="114" y="58" width="16" height="8" rx="1" fill="#333"/>
-                  <rect x="133" y="58" width="14" height="8" rx="1" fill="#00aa44"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">Energy Saving Supporting Devices</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/modular-io')}>
-              <div className="product-card-img prod-img-modio">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="20" y="15" width="120" height="90" rx="2" fill="#1a1a1a" stroke="#333" strokeWidth="1"/>
-                  <rect x="26" y="22" width="20" height="78" rx="1" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="48" y="22" width="20" height="78" rx="1" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="70" y="22" width="20" height="78" rx="1" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="92" y="22" width="20" height="78" rx="1" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <rect x="114" y="22" width="20" height="78" rx="1" fill="#2a2a2a" stroke="#444" strokeWidth="1"/>
-                  <circle cx="36" cy="30" r="2.5" fill="#00ff44"/>
-                  <circle cx="58" cy="30" r="2.5" fill="#00ff44"/>
-                  <circle cx="80" cy="30" r="2.5" fill="#ffaa00"/>
-                  <circle cx="102" cy="30" r="2.5" fill="#00ff44"/>
-                  <circle cx="124" cy="30" r="2.5" fill="#cc0000"/>
-                  <rect x="28" y="62" width="16" height="4" rx="1" fill="#555"/>
-                  <rect x="50" y="62" width="16" height="4" rx="1" fill="#555"/>
-                  <rect x="72" y="62" width="16" height="4" rx="1" fill="#555"/>
-                  <rect x="94" y="62" width="16" height="4" rx="1" fill="#555"/>
-                  <rect x="116" y="62" width="16" height="4" rx="1" fill="#555"/>
-                  <rect x="28" y="72" width="16" height="20" rx="1" fill="#cc6600" opacity=".8"/>
-                  <rect x="50" y="72" width="16" height="20" rx="1" fill="#cc6600" opacity=".8"/>
-                  <rect x="72" y="72" width="16" height="20" rx="1" fill="#cc6600" opacity=".8"/>
-                  <rect x="94" y="72" width="16" height="20" rx="1" fill="#cc6600" opacity=".8"/>
-                  <rect x="116" y="72" width="16" height="20" rx="1" fill="#cc6600" opacity=".8"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">Modular I/O</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/goc-43')}>
-              <div className="product-card-img prod-img-goc43">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="20" y="15" width="120" height="90" rx="4" fill="#1a1a1a" stroke="#333" strokeWidth="1"/>
-                  <rect x="25" y="20" width="110" height="65" rx="2" fill="#0a0a0a"/>
-                  <rect x="30" y="25" width="60" height="50" rx="1" fill="#0a1020"/>
-                  <text x="60" y="45" textAnchor="middle" fill="#4488ff" fontSize="8" fontFamily="monospace">GOC 43</text>
-                  <rect x="33" y="52" width="14" height="10" rx="1" fill="#00aa44"/>
-                  <rect x="50" y="52" width="14" height="10" rx="1" fill="#4488ff"/>
-                  <rect x="67" y="52" width="14" height="10" rx="1" fill="#cc0000"/>
-                  <rect x="96" y="28" width="36" height="52" rx="2" fill="#111"/>
-                  <circle cx="114" cy="44" r="12" fill="#222" stroke="#444" strokeWidth="1.5"/>
-                  <circle cx="114" cy="44" r="6" fill="#333" stroke="#555" strokeWidth="1"/>
-                  <circle cx="114" cy="36" r="2" fill="#666"/>
-                  <rect x="100" y="62" width="10" height="8" rx="1" fill="#cc0000"/>
-                  <rect x="114" y="62" width="10" height="8" rx="1" fill="#4488ff"/>
-                  <rect x="125" y="62" width="8" height="8" rx="1" fill="#00aa44"/>
-                  <rect x="25" y="88" width="110" height="12" rx="1" fill="#111"/>
-                  <rect x="30" y="91" width="6" height="6" rx="1" fill="#333"/>
-                  <rect x="40" y="91" width="6" height="6" rx="1" fill="#333"/>
-                  <rect x="100" y="91" width="30" height="4" rx="1" fill="#222"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">GOC 43 (PLC with HMI)</span>
-              </div>
-            </div>
-
-            <div className="product-card" onClick={() => navigate('/products/goc-35')}>
-              <div className="product-card-img prod-img-goc35">
-                <svg width="160" height="120" viewBox="0 0 160 120">
-                  <rect x="30" y="20" width="100" height="80" rx="3" fill="#1a1a1a" stroke="#333" strokeWidth="1"/>
-                  <rect x="36" y="26" width="88" height="50" rx="2" fill="#0a0a0a"/>
-                  <rect x="40" y="30" width="80" height="38" rx="1" fill="#0a1a2a"/>
-                  <text x="80" y="42" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="sans-serif">LANGUAGES</text>
-                  <text x="57" y="54" textAnchor="middle" fill="#4488ff" fontSize="6" fontFamily="sans-serif">हिन्दी</text>
-                  <text x="83" y="54" textAnchor="middle" fill="#4488ff" fontSize="6" fontFamily="sans-serif">日本</text>
-                  <text x="57" y="62" textAnchor="middle" fill="#4488ff" fontSize="6" fontFamily="sans-serif">தமிழ்</text>
-                  <text x="83" y="62" textAnchor="middle" fill="#4488ff" fontSize="6" fontFamily="sans-serif">Deutsch</text>
-                  <rect x="126" y="30" width="36" height="60" rx="2" fill="#111"/>
-                  <rect x="129" y="34" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="144" y="34" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="129" y="46" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="144" y="46" width="12" height="8" rx="1" fill="#cc0000"/>
-                  <rect x="129" y="58" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="144" y="58" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="129" y="70" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="144" y="70" width="12" height="8" rx="1" fill="#333"/>
-                  <rect x="36" y="80" width="88" height="14" rx="1" fill="#111"/>
-                </svg>
-              </div>
-              <div className="product-name">
-                <span className="prod-prefix">▶</span>
-                <span className="prod-name-link">GOC 35 (PLC with HMI)</span>
-              </div>
-            </div>
-
-          </div>
+      {/* ── MAIN PORTAL GRID ── */}
+      <div style={{ maxWidth: '1200px', margin: '30px auto 0', padding: '0 20px' }}>
+        
+        {/* Breadcrumbs */}
+        <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#64748b', marginBottom: '24px', fontWeight: '500' }}>
+          <Link to="/" style={{ color: '#475569' }}>Home</Link>
+          <span>/</span>
+          <span style={{ color: '#94a3b8' }}>Products</span>
         </div>
-      </section>
+
+        {/* ── TOP SEARCH & FILTER CONTROLS ── */}
+        <div style={{
+          background: '#fff',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          padding: '24px',
+          marginBottom: '32px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+        }}>
+          
+          {/* Search bar */}
+          <div style={{ position: 'relative', maxWidth: '500px', marginBottom: '20px' }}>
+            <input
+              type="text"
+              placeholder="Search models, instructions, or features..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px 12px 42px',
+                borderRadius: '24px',
+                border: '1.5px solid #d1d5db',
+                fontSize: '14.5px',
+                outline: 'none',
+                transition: 'all 0.2s',
+                boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.03)'
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--red)'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+            />
+            <svg viewBox="0 0 24 24" style={{ position: 'absolute', left: '16px', top: '13px', width: '18px', height: '18px', fill: 'none', stroke: '#9ca3af', strokeWidth: 2.2 }}>
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+
+          {/* Horizontal Category Tags */}
+          <div>
+            <span style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', color: '#64748b', marginBottom: '10px', letterSpacing: '0.5px' }}>
+              Filter by segment
+            </span>
+            <ul className="c-filter-tags">
+              <li>
+                <button 
+                  onClick={() => handleCategorySelect('all')}
+                  className={`c-filter-tag-btn ${activeCategory === 'all' ? 'active' : ''}`}
+                >
+                  All Products ({getProductCount('all')})
+                </button>
+              </li>
+              {categories.map(cat => (
+                <li key={cat.id}>
+                  <button
+                    onClick={() => handleCategorySelect(cat.id)}
+                    className={`c-filter-tag-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                  >
+                    {cat.name} ({getProductCount(cat.id)})
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        </div>
+
+        {/* Dynamic Filter Details Banner */}
+        {activeCategory !== 'all' && (
+          <div style={{
+            background: '#f8fafc',
+            borderLeft: '4px solid #e60012',
+            padding: '20px 24px',
+            borderRadius: '0 6px 6px 0',
+            marginBottom: '36px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '20px',
+            animation: 'fadeIn 0.3s ease'
+          }}>
+            <div style={{ flex: 1, minWidth: '280px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
+                Active Segment: {activeCategoryObject?.name}
+              </h3>
+              <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.6', margin: 0 }}>
+                {activeCategoryObject?.description}
+              </p>
+            </div>
+            {activeCategoryObject?.brochureUrl && (
+              <a
+                href={activeCategoryObject.brochureUrl}
+                download={`${activeCategoryObject.name}-Brochure`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  backgroundColor: '#e60012',
+                  color: '#fff',
+                  padding: '10px 18px',
+                  borderRadius: '4px',
+                  fontWeight: '700',
+                  fontSize: '12.5px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  textDecoration: 'none',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = 'var(--dark-red)'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#e60012'}
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download Segment PDF
+              </a>
+            )}
+          </div>
+        )}
+
+        {/* ── QUICK ACTION LINKS ANCHOR BAR ── */}
+        <div className="c-anchorNav" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
+          marginBottom: '40px'
+        }}>
+          <Link to="/about" className="c-linkWithIcon">
+            <div className="c-linkWithIcon__icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div className="c-linkWithIcon__link u-icons--bulletRight">
+              Our Commitment to Sustainability
+            </div>
+          </Link>
+          
+          <Link to="/contact" className="c-linkWithIcon">
+            <div className="c-linkWithIcon__icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div className="c-linkWithIcon__link u-icons--bulletRight">
+              FA Products Security Initiatives
+            </div>
+          </Link>
+          
+          <Link to="/about" className="c-linkWithIcon">
+            <div className="c-linkWithIcon__icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div className="c-linkWithIcon__link u-icons--bulletRight">
+              Pune Automation Center Hub
+            </div>
+          </Link>
+        </div>
+
+        {/* ── IF SEARCH RESULTS EXIST ── */}
+        {hasAnyContent ? (
+          <>
+            
+            {/* ── SECTION 1: HARDWARE ── */}
+            {visibleHardwareCategories.length > 0 && (
+              <section style={{ marginBottom: '50px', animation: 'fadeIn 0.4s ease' }}>
+                <h2 className="c-headingLv2">Hardware</h2>
+                <div className="c-portalGrid">
+                  {visibleHardwareCategories.map(cat => {
+                    const catProducts = products.filter(p => p.categorySlug === cat.id);
+                    const filteredCatProducts = catProducts.filter(p => {
+                      if (!searchQuery) return true;
+                      return p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                             p.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                             p.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    });
+                    
+                    return (
+                      <div className="c-portalCard" key={cat.id}>
+                        <img 
+                          src={cat.image || '/images/cat_default.jpg'} 
+                          className="c-portalCard__img" 
+                          alt={cat.name} 
+                          onError={(e) => { e.target.src = '/images/cat_default.jpg'; }}
+                        />
+                        <h3 className="c-portalCard__title" style={{ cursor: 'default' }}>
+                          <span>{cat.name}</span>
+                          <span style={{ fontSize: '11px', background: '#f3f4f6', color: '#6b7280', padding: '2px 8px', borderRadius: '10px' }}>
+                            {filteredCatProducts.length}
+                          </span>
+                        </h3>
+                        <ul className="c-portalCard__list">
+                          {filteredCatProducts.map(prod => (
+                            <li className="c-portalCard__item" key={prod.id} style={{ margin: '4px 0' }}>
+                              <Link to={`/products/${prod.id}`}>
+                                <span className="u-icons--bulletRight" style={{ fontWeight: '600' }}>{prod.name}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Additional placeholder categories, displayed only when there is no query filters */}
+                  {!searchQuery && activeCategory === 'all' && (
+                    <>
+                      <div className="c-portalCard">
+                        <div className="c-portalCard__img" style={{
+                          background: 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.2">
+                            <rect x="2" y="2" width="20" height="20" rx="2" />
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <line x1="12" y1="2" x2="12" y2="22" />
+                          </svg>
+                        </div>
+                        <h3 className="c-portalCard__title" style={{ cursor: 'default' }}>
+                          Modular I/O Systems
+                        </h3>
+                        <ul className="c-portalCard__list">
+                          <li className="c-portalCard__item">
+                            <Link to="/contact">
+                              <span className="u-icons--bulletRight">Remote I/O Slice Terminals</span>
+                            </Link>
+                          </li>
+                          <li className="c-portalCard__item">
+                            <Link to="/contact">
+                              <span className="u-icons--bulletRight">CC-Link IE TSN Remote Modules</span>
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="c-portalCard">
+                        <div className="c-portalCard__img" style={{
+                          background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e60012" strokeWidth="1.2">
+                            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" />
+                            <line x1="12" y1="2" x2="12" y2="22" />
+                            <line x1="2" y1="8.5" x2="12" y2="15" />
+                            <line x1="22" y1="8.5" x2="12" y2="15" />
+                          </svg>
+                        </div>
+                        <h3 className="c-portalCard__title" style={{ cursor: 'default' }}>
+                          Industrial Computers
+                        </h3>
+                        <ul className="c-portalCard__list">
+                          <li className="c-portalCard__item">
+                            <Link to="/contact">
+                              <span className="u-icons--bulletRight">MELIPC Edge Computing Devices</span>
+                            </Link>
+                          </li>
+                          <li className="c-portalCard__item">
+                            <Link to="/contact">
+                              <span className="u-icons--bulletRight">High-reliability fanless IPCs</span>
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </>
+                  )}
+
+                </div>
+
+                {/* Strong Box for Spec Lists */}
+                <div className="u-box u-box--strong">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '24px'
+                  }}>
+                    <Link to="/contact" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#e60012" strokeWidth="2.2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                      <span style={{ fontSize: '13.5px', fontWeight: '600', color: '#1a1f2e' }} className="u-icons--bulletRight">
+                        Technical Specifications Directory
+                      </span>
+                    </Link>
+                    <Link to="/about" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#e60012" strokeWidth="2.2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <span style={{ fontSize: '13.5px', fontWeight: '600', color: '#1a1f2e' }} className="u-icons--bulletRight">
+                        Products Certified to Global Standards
+                      </span>
+                    </Link>
+                    <Link to="/contact" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#e60012" strokeWidth="2.2" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      <span style={{ fontSize: '13.5px', fontWeight: '600', color: '#1a1f2e' }} className="u-icons--bulletRight">
+                        Discontinued Units & Retrofit Solutions
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* ── SECTION 2: NETWORKS ── */}
+            {shouldShowNetworks && (
+              <section style={{ marginBottom: '50px', animation: 'fadeIn 0.4s ease' }}>
+                <h2 className="c-headingLv2">Network Integration</h2>
+                <div className="c-portalGrid">
+                  
+                  <div className="c-linkWithImage">
+                    <div className="c-linkWithImage__image" style={{ background: '#0d1b2a', minHeight: '130px' }}>
+                      <span style={{ color: '#fff', fontSize: '24px', fontWeight: '800', letterSpacing: '1px' }}>TSN</span>
+                    </div>
+                    <div className="c-linkWithImage__content">
+                      <span className="c-linkWithImage__link u-icons--bulletRight">CC-Link IE TSN</span>
+                      <p className="c-linkWithImage__text">
+                        Gigabit Ethernet-based open network connecting business systems directly to plant operations with real-time time-synchronized synchronization.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="c-linkWithImage">
+                    <div className="c-linkWithImage__image" style={{ background: '#780000', minHeight: '130px' }}>
+                      <span style={{ color: '#fff', fontSize: '24px', fontWeight: '800', letterSpacing: '1px' }}>FIBER</span>
+                    </div>
+                    <div className="c-linkWithImage__content">
+                      <span className="c-linkWithImage__link u-icons--bulletRight">SSCNET III/H</span>
+                      <p className="c-linkWithImage__text">
+                        High-performance fiber-optic servo network. Guarantees interference-free high-speed synchronization for multi-axis motion controls.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="c-linkWithImage">
+                    <div className="c-linkWithImage__image" style={{ background: '#003049', minHeight: '130px' }}>
+                      <span style={{ color: '#fff', fontSize: '24px', fontWeight: '800', letterSpacing: '1px' }}>FIELD</span>
+                    </div>
+                    <div className="c-linkWithImage__content">
+                      <span className="c-linkWithImage__link u-icons--bulletRight">CC-Link IE Field</span>
+                      <p className="c-linkWithImage__text">
+                        Integrated control, simple wiring, and safety networking across field controllers over Cat5e topology grids.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="c-linkWithImage">
+                    <div className="c-linkWithImage__image" style={{ background: '#3d5a80', minHeight: '130px' }}>
+                      <span style={{ color: '#fff', fontSize: '22px', fontWeight: '800', letterSpacing: '1px' }}>BASIC</span>
+                    </div>
+                    <div className="c-linkWithImage__content">
+                      <span className="c-linkWithImage__link u-icons--bulletRight">CC-Link IE Field Basic</span>
+                      <p className="c-linkWithImage__text">
+                        Software-based implementation enabling cyclic ethernet packet communication without custom controller ASICs.
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </section>
+            )}
+
+            {/* ── SECTION 3: SOFTWARE ── */}
+            {shouldShowSoftware && (
+              <section style={{ marginBottom: '50px', animation: 'fadeIn 0.4s ease' }}>
+                <h2 className="c-headingLv2">Software</h2>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px', marginBottom: '32px' }}>
+                  <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '4px', padding: '24px', display: 'flex', gap: '20px' }}>
+                    <div style={{ flexShrink: 0 }}>
+                      <svg viewBox="0 0 24 24" width="40" height="40" stroke="#e60012" strokeWidth="1.5" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                    </div>
+                    <div>
+                      <h3 className="c-headingLv3--noBorder">Solution Software</h3>
+                      <p className="c-text">
+                        Optimize operational efficiency across plant lifecycle phases. SCADA visualization dashboards (GENESIS64), 3D automation system simulators (MELSOFT Gemini), and AI engineering assistants.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '4px', padding: '24px', display: 'flex', gap: '20px' }}>
+                    <div style={{ flexShrink: 0 }}>
+                      <svg viewBox="0 0 24 24" width="40" height="40" stroke="#e60012" strokeWidth="1.5" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div>
+                      <h3 className="c-headingLv3--noBorder">Engineering Tool Suites</h3>
+                      <p className="c-text">
+                        Configure and troubleshoot your devices. Support setup times with MELSOFT GX Works3 (PLC), GT Works3 (HMI), MT Developer2 (Motion Controllers), and setup utilities.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '16px',
+                  borderTop: '1px solid #e5e7eb',
+                  paddingTop: '24px'
+                }}>
+                  {products.filter(p => p.categorySlug === 'software').map(prod => (
+                    <Link to={`/products/${prod.id}`} key={prod.id} className="u-icons--bulletRight" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--blue)', textAlign: 'left', padding: 0 }}>
+                      {prod.name}
+                    </Link>
+                  ))}
+                  
+                  {products.filter(p => p.categorySlug === 'software').length === 0 && (
+                    <>
+                      <button onClick={() => setSearchQuery('GX Works')} className="u-icons--bulletRight" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--blue)', textAlign: 'left', padding: 0 }}>
+                        Integrated Engineering Software (iQ Works)
+                      </button>
+                      <button onClick={() => setSearchQuery('GX Works')} className="u-icons--bulletRight" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--blue)', textAlign: 'left', padding: 0 }}>
+                        PLC Configuration Tools (GX Works)
+                      </button>
+                      <button onClick={() => setSearchQuery('GT Works')} className="u-icons--bulletRight" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--blue)', textAlign: 'left', padding: 0 }}>
+                        HMI Design Software (GT Works)
+                      </button>
+                      <button onClick={() => setSearchQuery('Configurator')} className="u-icons--bulletRight" style={{ fontSize: '13px', fontWeight: '600', color: 'var(--blue)', textAlign: 'left', padding: 0 }}>
+                        Servo Utility Software (MR Configurator)
+                      </button>
+                    </>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* ── SECTION 4: RELATED INFO ── */}
+            {activeCategory === 'all' && !searchQuery && (
+              <section style={{ marginBottom: '30px', animation: 'fadeIn 0.4s ease' }}>
+                <h2 className="c-headingLv2">Related Information</h2>
+                <div className="c-portalGrid">
+                  
+                  <Link to="/about" className="c-linkWithIcon" style={{ padding: '20px' }}>
+                    <div className="c-linkWithIcon__icon" style={{ background: '#f0fdf4', color: '#16a34a' }}>
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
+                    </div>
+                    <span className="c-linkWithIcon__link u-icons--bulletRight">Media Catalog Library</span>
+                  </Link>
+
+                  <Link to="/contact" className="c-linkWithIcon" style={{ padding: '20px' }}>
+                    <div className="c-linkWithIcon__icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <span className="c-linkWithIcon__link u-icons--bulletRight">FA Specification Search App</span>
+                  </Link>
+
+                  <Link to="/about" className="c-linkWithIcon" style={{ padding: '20px' }}>
+                    <div className="c-linkWithIcon__icon" style={{ background: '#faf5ff', color: '#9333ea' }}>
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <span className="c-linkWithIcon__link u-icons--bulletRight">Authorized Distributor Network</span>
+                  </Link>
+
+                  <Link to="/contact" className="c-linkWithIcon" style={{ padding: '20px' }}>
+                    <div className="c-linkWithIcon__icon" style={{ background: '#fffbeb', color: '#d97706' }}>
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <span className="c-linkWithIcon__link u-icons--bulletRight">Customer Training Center</span>
+                  </Link>
+
+                </div>
+              </section>
+            )}
+
+          </>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '60px 20px', background: '#f9fafb', borderRadius: '8px', border: '1px dashed #d1d5db', color: '#6b7280', animation: 'fadeIn 0.3s' }}>
+            <svg viewBox="0 0 24 24" style={{ width: '48px', height: '48px', fill: 'none', stroke: '#9ca3af', strokeWidth: 1.5, marginBottom: '12px', margin: '0 auto' }}>
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <p style={{ fontWeight: '600', fontSize: '16px', marginBottom: '4px' }}>No products or categories match your query</p>
+            <p style={{ fontSize: '14px' }}>Try resetting your filters or typing a different keyword in the search bar.</p>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

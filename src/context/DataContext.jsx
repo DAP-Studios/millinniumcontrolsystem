@@ -8,7 +8,21 @@ export function DataProvider({ children }) {
     try {
       const stored = localStorage.getItem('mcs_categories');
       if (stored) {
-        return JSON.parse(stored);
+        const storedCats = JSON.parse(stored);
+        const merged = [];
+        const handledIds = new Set();
+        
+        for (const cat of initialCategories) {
+          merged.push(cat);
+          handledIds.add(cat.id);
+        }
+        
+        for (const cat of storedCats) {
+          if (!handledIds.has(cat.id)) {
+            merged.push(cat);
+          }
+        }
+        return merged;
       }
     } catch (e) {
       console.error("Error reading categories from localStorage", e);
@@ -20,7 +34,21 @@ export function DataProvider({ children }) {
     try {
       const stored = localStorage.getItem('mcs_products');
       if (stored) {
-        return JSON.parse(stored);
+        const storedProds = JSON.parse(stored);
+        const merged = [];
+        const handledIds = new Set();
+        
+        for (const prod of initialProducts) {
+          merged.push(prod);
+          handledIds.add(prod.id);
+        }
+        
+        for (const prod of storedProds) {
+          if (!handledIds.has(prod.id)) {
+            merged.push(prod);
+          }
+        }
+        return merged;
       }
     } catch (e) {
       console.error("Error reading products from localStorage", e);
@@ -115,7 +143,9 @@ export function DataProvider({ children }) {
       deleteCategory,
       updateCategory,
       addProduct,
-      deleteProduct
+      deleteProduct,
+      setCategories,
+      setProducts
     }}>
       {children}
     </DataContext.Provider>

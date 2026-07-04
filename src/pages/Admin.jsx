@@ -122,14 +122,38 @@ function CameraCapture({ onCapture, label, isPdfMode }) {
 }
 
 export default function Admin() {
-  const { categories, products, addCategory, deleteCategory, updateCategory, addProduct, deleteProduct } = useData();
+  const { 
+    categories, 
+    products, 
+    addCategory, 
+    deleteCategory, 
+    updateCategory, 
+    addProduct, 
+    deleteProduct,
+    setCategories,
+    setProducts 
+  } = useData();
 
-  // Tab state: 'categories' | 'products'
+  // Tab state: 'categories' | 'products' | 'cloudinary'
   const [activeConsole, setActiveConsole] = useState('categories');
 
   // Common alert notifications
   const [alert, setAlert] = useState({ type: '', message: '' });
   const clearAlert = () => setTimeout(() => setAlert({ type: '', message: '' }), 4000);
+
+  // Cloudinary Settings State
+  const [cloudName, setCloudName] = useState(() => localStorage.getItem('mcs_cloudinary_cloud_name') || import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '');
+  const [uploadPreset, setUploadPreset] = useState(() => localStorage.getItem('mcs_cloudinary_upload_preset') || import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '');
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncProgress, setSyncProgress] = useState('');
+
+  // Uploading States
+  const [catImgUploading, setCatImgUploading] = useState(false);
+  const [catBroUploading, setCatBroUploading] = useState(false);
+  const [prodImgUploading, setProdImgUploading] = useState(false);
+  const [inlineCatImgUploading, setInlineCatImgUploading] = useState(false);
+  const [inlineCatBroUploading, setInlineCatBroUploading] = useState(false);
 
   // ----------------------------------------------------
   // CATEGORY CONSOLE STATE
@@ -181,14 +205,220 @@ export default function Admin() {
     keywords: 'Admin, Millennium Control System, Products Manager'
   });
 
-  const handleFileChange = (e, setVal) => {
+  const uploadToCloudinary = async (fileOrUrl, cName, uPreset) => {
+    let fileToUpload = fileOrUrl;
+
+    // If it's a local relative URL, fetch it and convert to blob
+    if (typeof fileOrUrl === 'string' && fileOrUrl.startsWith('/') && !fileOrUrl.startsWith('data:')) {
+      try {
+        const response = await fetch(fileOrUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch local file ${fileOrUrl} (Status: ${response.status})`);
+        }
+        fileToUpload = await response.blob();
+      } catch (e) {
+        console.warn(`Could not load local asset ${fileOrUrl} to upload to Cloudinary. Skipping.`, e);
+        throw e;
+      }
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+    formData.append('upload_preset', uPreset);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${cName}/auto/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'Upload to Cloudinary failed.');
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  };
+
+  const handleFileChangeAndUpload = async (e, setVal, setUploadingState, fieldLabel) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setVal(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Set preview / read local base64 first
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const localBase64 = reader.result;
+      
+      // If Cloudinary is configured, upload it
+      if (cloudName && uploadPreset) {
+        setUploadingState(true);
+        try {
+          const cloudinaryUrl = await uploadToCloudinary(file, cloudName, uploadPreset);
+          setVal(cloudinaryUrl);
+          setAlert({ type: 'success', message: `${fieldLabel} uploaded to Cloudinary successfully!` });
+          clearAlert();
+        } catch (err) {
+          console.error(err);
+          setAlert({ type: 'error', message: `Cloudinary Upload Failed: ${err.message}. Reverting to Base64 local storage.` });
+          setVal(localBase64); // Fallback to local Base64
+          clearAlert();
+        } finally {
+          setUploadingState(false);
+        }
+      } else {
+        // Fallback to Base64
+        setVal(localBase64);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCameraCaptureAndUpload = async (dataUrl, setVal, setUploadingState, fieldLabel) => {
+    if (cloudName && uploadPreset) {
+      setUploadingState(true);
+      try {
+        const cloudinaryUrl = await uploadToCloudinary(dataUrl, cloudName, uploadPreset);
+        setVal(cloudinaryUrl);
+        setAlert({ type: 'success', message: `${fieldLabel} uploaded to Cloudinary successfully!` });
+        clearAlert();
+      } catch (err) {
+        console.error(err);
+        setAlert({ type: 'error', message: `Cloudinary Upload Failed: ${err.message}. Reverting to Base64 local storage.` });
+        setVal(dataUrl); // Fallback to local Base64
+        clearAlert();
+      } finally {
+        setUploadingState(false);
+      }
+    } else {
+      setVal(dataUrl);
+    }
+  };
+
+  const testCloudinaryConnection = async () => {
+    if (!cloudName || !uploadPreset) {
+      setAlert({ type: 'error', message: 'Please enter both Cloud Name and Upload Preset to test.' });
+      return;
+    }
+    setTestingConnection(true);
+    try {
+      const testGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+      const url = await uploadToCloudinary(testGif, cloudName, uploadPreset);
+      if (url) {
+        setAlert({ type: 'success', message: 'Cloudinary connection test successful! Uploaded test asset.' });
+      } else {
+        throw new Error('No URL returned.');
+      }
+      clearAlert();
+    } catch (err) {
+      console.error(err);
+      setAlert({ type: 'error', message: `Cloudinary test failed: ${err.message}` });
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
+  const syncExistingAssets = async () => {
+    if (!cloudName || !uploadPreset) {
+      setAlert({ type: 'error', message: 'Please configure Cloudinary before syncing.' });
+      return;
+    }
+    setSyncing(true);
+    setSyncProgress('Initializing sync...');
+    try {
+      let updatedCategories = [...categories];
+      let updatedProducts = [...products];
+      let categoriesChanged = false;
+      let productsChanged = false;
+      
+      // Sync Categories
+      for (let i = 0; i < updatedCategories.length; i++) {
+        const cat = updatedCategories[i];
+        
+        // Image
+        if (cat.image && !cat.image.includes('cloudinary.com') && (cat.image.startsWith('data:') || cat.image.startsWith('/images/'))) {
+          setSyncProgress(`Uploading image for category "${cat.name}"...`);
+          try {
+            const url = await uploadToCloudinary(cat.image, cloudName, uploadPreset);
+            updatedCategories[i] = { ...updatedCategories[i], image: url };
+            categoriesChanged = true;
+          } catch (err) {
+            console.error(`Failed to sync category image for ${cat.name}:`, err);
+          }
+        }
+
+        // Brochure
+        if (cat.brochureUrl && !cat.brochureUrl.includes('cloudinary.com') && (cat.brochureUrl.startsWith('data:') || cat.brochureUrl.startsWith('/brochures/'))) {
+          setSyncProgress(`Uploading brochure for category "${cat.name}"...`);
+          try {
+            const url = await uploadToCloudinary(cat.brochureUrl, cloudName, uploadPreset);
+            updatedCategories[i] = { ...updatedCategories[i], brochureUrl: url };
+            categoriesChanged = true;
+          } catch (err) {
+            console.error(`Failed to sync category brochure for ${cat.name}:`, err);
+          }
+        }
+      }
+
+      // Sync Products
+      for (let i = 0; i < updatedProducts.length; i++) {
+        const prod = updatedProducts[i];
+        
+        // Image
+        if (prod.imageUrl && !prod.imageUrl.includes('cloudinary.com') && (prod.imageUrl.startsWith('data:') || prod.imageUrl.startsWith('/images/'))) {
+          setSyncProgress(`Uploading image for product "${prod.name}"...`);
+          try {
+            const url = await uploadToCloudinary(prod.imageUrl, cloudName, uploadPreset);
+            updatedProducts[i] = { ...updatedProducts[i], imageUrl: url };
+            productsChanged = true;
+          } catch (err) {
+            console.error(`Failed to sync product image for ${prod.name}:`, err);
+          }
+        }
+
+        // Catalog
+        if (prod.catalogUrl && prod.catalogUrl !== '#' && !prod.catalogUrl.includes('cloudinary.com') && (prod.catalogUrl.startsWith('data:') || prod.catalogUrl.startsWith('/brochures/') || prod.catalogUrl.startsWith('/catalogs/'))) {
+          setSyncProgress(`Uploading catalog for product "${prod.name}"...`);
+          try {
+            const url = await uploadToCloudinary(prod.catalogUrl, cloudName, uploadPreset);
+            updatedProducts[i] = { ...updatedProducts[i], catalogUrl: url };
+            productsChanged = true;
+          } catch (err) {
+            console.error(`Failed to sync product catalog for ${prod.name}:`, err);
+          }
+        }
+      }
+
+      if (categoriesChanged) {
+        setCategories(updatedCategories);
+      }
+      if (productsChanged) {
+        setProducts(updatedProducts);
+      }
+
+      setAlert({ type: 'success', message: 'All local assets successfully synced to Cloudinary!' });
+      setSyncProgress('');
+      clearAlert();
+    } catch (error) {
+      console.error(error);
+      setAlert({ type: 'error', message: `Sync failed: ${error.message}` });
+      setSyncProgress('');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const handleCategoryDelete = (id, name) => {
+    if (window.confirm(`Are you sure you want to delete the category "${name}"? This will not delete products under it.`)) {
+      const res = deleteCategory(id);
+      if (res.success) {
+        setAlert({ type: 'success', message: `Category "${name}" deleted.` });
+      } else {
+        setAlert({ type: 'error', message: res.error });
+      }
+      clearAlert();
     }
   };
 
@@ -392,6 +622,22 @@ export default function Admin() {
           >
             Manage Products
           </button>
+          <button 
+            type="button" 
+            onClick={() => setActiveConsole('cloudinary')}
+            style={{
+              padding: '12px 24px',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              color: activeConsole === 'cloudinary' ? '#e60012' : '#4b5563',
+              borderBottom: activeConsole === 'cloudinary' ? '3px solid #e60012' : '3px solid transparent',
+              marginBottom: '-2px',
+              backgroundColor: 'transparent'
+            }}
+          >
+            Cloudinary Configuration
+          </button>
         </div>
 
         {/* Global Alerts */}
@@ -457,10 +703,22 @@ export default function Admin() {
                     <input type="text" value={catImgLink} onChange={(e) => setCatImgLink(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '14px' }} />
                   )}
                   {catImgMode === 'device' && (
-                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setCatImgFile)} style={{ fontSize: '13px' }} />
+                    <div>
+                      <input type="file" accept="image/*" onChange={(e) => handleFileChangeAndUpload(e, setCatImgFile, setCatImgUploading, 'Category Image')} style={{ fontSize: '13px' }} />
+                      {catImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading to Cloudinary...</div>}
+                      {!catImgUploading && catImgFile && catImgFile.startsWith('https://res.cloudinary.com') && (
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                      )}
+                    </div>
                   )}
                   {catImgMode === 'capture' && (
-                    <CameraCapture onCapture={setCatImgCap} label="Capture Image" isPdfMode={false} />
+                    <div>
+                      <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setCatImgCap, setCatImgUploading, 'Category Image')} label="Capture Image" isPdfMode={false} />
+                      {catImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading snapshot to Cloudinary...</div>}
+                      {!catImgUploading && catImgCap && catImgCap.startsWith('https://res.cloudinary.com') && (
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Snapshot uploaded to Cloudinary</div>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -476,10 +734,22 @@ export default function Admin() {
                     <input type="text" value={catBroLink} onChange={(e) => setCatBroLink(e.target.value)} placeholder="e.g. /brochures/got.pdf" style={{ width: '100%', padding: '10px 14px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '14px' }} />
                   )}
                   {catBroMode === 'device' && (
-                    <input type="file" accept="application/pdf,image/*" onChange={(e) => handleFileChange(e, setCatBroFile)} style={{ fontSize: '13px' }} />
+                    <div>
+                      <input type="file" accept="application/pdf,image/*" onChange={(e) => handleFileChangeAndUpload(e, setCatBroFile, setCatBroUploading, 'Category Brochure PDF')} style={{ fontSize: '13px' }} />
+                      {catBroUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading PDF/Image to Cloudinary...</div>}
+                      {!catBroUploading && catBroFile && catBroFile.startsWith('https://res.cloudinary.com') && (
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                      )}
+                    </div>
                   )}
                   {catBroMode === 'capture' && (
-                    <CameraCapture onCapture={setCatBroCap} label="Scan Brochure Sheet" isPdfMode={true} />
+                    <div>
+                      <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setCatBroCap, setCatBroUploading, 'Category Brochure PDF')} label="Scan Brochure Sheet" isPdfMode={true} />
+                      {catBroUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading scan to Cloudinary...</div>}
+                      {!catBroUploading && catBroCap && catBroCap.startsWith('https://res.cloudinary.com') && (
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Scan uploaded to Cloudinary</div>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -509,7 +779,7 @@ export default function Admin() {
                         <td style={{ padding: '14px 8px', fontFamily: 'monospace', fontSize: '12px' }}>{cat.id}</td>
                         <td style={{ padding: '14px 8px' }}>{getProductCount(cat.id)} items</td>
                         <td style={{ padding: '14px 8px', textAlign: 'right' }}>
-                          <button onClick={() => handleDelete(cat.id, cat.name)} style={{ color: '#dc2626', fontWeight: '600', cursor: 'pointer', background: 'none', border: 'none' }}>Delete</button>
+                          <button onClick={() => handleCategoryDelete(cat.id, cat.name)} style={{ color: '#dc2626', fontWeight: '600', cursor: 'pointer', background: 'none', border: 'none' }}>Delete</button>
                         </td>
                       </tr>
                     ))}
@@ -601,10 +871,22 @@ export default function Admin() {
                         <input type="text" value={inlineCatImgLink} onChange={(e) => setInlineCatImgLink(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: '4px', border: '1px solid #fca5a5', fontSize: '13px' }} />
                       )}
                       {inlineCatImgMode === 'device' && (
-                        <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setInlineCatImgFile)} style={{ fontSize: '11px' }} />
+                        <div>
+                          <input type="file" accept="image/*" onChange={(e) => handleFileChangeAndUpload(e, setInlineCatImgFile, setInlineCatImgUploading, 'Inline Category Image')} style={{ fontSize: '11px' }} />
+                          {inlineCatImgUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading to Cloudinary...</div>}
+                          {!inlineCatImgUploading && inlineCatImgFile && inlineCatImgFile.startsWith('https://res.cloudinary.com') && (
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                          )}
+                        </div>
                       )}
                       {inlineCatImgMode === 'capture' && (
-                        <CameraCapture onCapture={setInlineCatImgCap} label="Capture Image" isPdfMode={false} />
+                        <div>
+                          <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setInlineCatImgCap, setInlineCatImgUploading, 'Inline Category Image')} label="Capture Image" isPdfMode={false} />
+                          {inlineCatImgUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading snapshot to Cloudinary...</div>}
+                          {!inlineCatImgUploading && inlineCatImgCap && inlineCatImgCap.startsWith('https://res.cloudinary.com') && (
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Snapshot uploaded to Cloudinary</div>
+                          )}
+                        </div>
                       )}
                     </div>
 
@@ -620,10 +902,22 @@ export default function Admin() {
                         <input type="text" value={inlineCatBroLink} onChange={(e) => setInlineCatBroLink(e.target.value)} placeholder="e.g. /brochures/manual.pdf" style={{ width: '100%', padding: '8px 12px', borderRadius: '4px', border: '1px solid #fca5a5', fontSize: '13px' }} />
                       )}
                       {inlineCatBroMode === 'device' && (
-                        <input type="file" accept="application/pdf,image/*" onChange={(e) => handleFileChange(e, setInlineCatBroFile)} style={{ fontSize: '11px' }} />
+                        <div>
+                          <input type="file" accept="application/pdf,image/*" onChange={(e) => handleFileChangeAndUpload(e, setInlineCatBroFile, setInlineCatBroUploading, 'Inline Category Brochure PDF')} style={{ fontSize: '11px' }} />
+                          {inlineCatBroUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading PDF/Image to Cloudinary...</div>}
+                          {!inlineCatBroUploading && inlineCatBroFile && inlineCatBroFile.startsWith('https://res.cloudinary.com') && (
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                          )}
+                        </div>
                       )}
                       {inlineCatBroMode === 'capture' && (
-                        <CameraCapture onCapture={setInlineCatBroCap} label="Scan brochure sheet" isPdfMode={true} />
+                        <div>
+                          <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setInlineCatBroCap, setInlineCatBroUploading, 'Inline Category Brochure PDF')} label="Scan brochure sheet" isPdfMode={true} />
+                          {inlineCatBroUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading scan to Cloudinary...</div>}
+                          {!inlineCatBroUploading && inlineCatBroCap && inlineCatBroCap.startsWith('https://res.cloudinary.com') && (
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Scan uploaded to Cloudinary</div>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -665,10 +959,22 @@ export default function Admin() {
                     <input type="text" value={prodImgLink} onChange={(e) => setProdImgLink(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '14px' }} />
                   )}
                   {prodImgMode === 'device' && (
-                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setProdImgFile)} style={{ fontSize: '13px' }} />
+                    <div>
+                      <input type="file" accept="image/*" onChange={(e) => handleFileChangeAndUpload(e, setProdImgFile, setProdImgUploading, 'Product Image')} style={{ fontSize: '13px' }} />
+                      {prodImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading to Cloudinary...</div>}
+                      {!prodImgUploading && prodImgFile && prodImgFile.startsWith('https://res.cloudinary.com') && (
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                      )}
+                    </div>
                   )}
                   {prodImgMode === 'capture' && (
-                    <CameraCapture onCapture={setProdImgCap} label="Capture Product Image" isPdfMode={false} />
+                    <div>
+                      <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setProdImgCap, setProdImgUploading, 'Product Image')} label="Capture Product Image" isPdfMode={false} />
+                      {prodImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading snapshot to Cloudinary...</div>}
+                      {!prodImgUploading && prodImgCap && prodImgCap.startsWith('https://res.cloudinary.com') && (
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Snapshot uploaded to Cloudinary</div>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -741,6 +1047,126 @@ export default function Admin() {
                     })}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeConsole === 'cloudinary' && (
+          <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '40px' }}>
+            {/* Form */}
+            <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+              <h2 style={{ fontSize: '20px', color: '#111827', marginBottom: '20px', fontWeight: '700', borderBottom: '2px solid #e60012', paddingBottom: '8px', display: 'inline-block' }}>
+                Cloudinary Configuration
+              </h2>
+              
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                localStorage.setItem('mcs_cloudinary_cloud_name', cloudName.trim());
+                localStorage.setItem('mcs_cloudinary_upload_preset', uploadPreset.trim());
+                setAlert({ type: 'success', message: 'Cloudinary configuration saved successfully!' });
+                clearAlert();
+              }}>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Cloud Name *</label>
+                  <input 
+                    type="text" 
+                    value={cloudName}
+                    onChange={(e) => setCloudName(e.target.value)}
+                    placeholder="Enter your Cloudinary Cloud Name" 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '14px', color: '#111827' }}
+                    required
+                  />
+                </div>
+
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Upload Preset (Unsigned) *</label>
+                  <input 
+                    type="text" 
+                    value={uploadPreset}
+                    onChange={(e) => setUploadPreset(e.target.value)}
+                    placeholder="Enter your Unsigned Upload Preset" 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '14px', color: '#111827' }}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button type="submit" style={{ flex: 1, backgroundColor: '#e60012', color: '#fff', padding: '12px', fontWeight: '600', borderRadius: '4px', border: 'none', cursor: 'pointer' }}>
+                    Save Settings
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={testCloudinaryConnection}
+                    disabled={testingConnection}
+                    style={{ flex: 1, backgroundColor: '#0f172a', color: '#fff', padding: '12px', fontWeight: '600', borderRadius: '4px', border: 'none', cursor: 'pointer', opacity: testingConnection ? 0.7 : 1 }}
+                  >
+                    {testingConnection ? '⏳ Testing...' : '🧪 Test Connection'}
+                  </button>
+                </div>
+              </form>
+
+              {/* Bulk sync tool */}
+              <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #e5e7eb' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#111827', marginBottom: '10px' }}>Bulk Image & PDF Sync</h3>
+                <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '16px', lineHeight: '1.5' }}>
+                  Upload all current images and PDF brochures (from existing categories and products) that are currently stored as Base64 strings or local placeholders to Cloudinary in bulk.
+                </p>
+                <button 
+                  type="button" 
+                  onClick={syncExistingAssets}
+                  disabled={syncing}
+                  style={{ width: '100%', backgroundColor: '#2563eb', color: '#fff', padding: '12px', fontWeight: '600', borderRadius: '4px', border: 'none', cursor: 'pointer', opacity: syncing ? 0.7 : 1 }}
+                >
+                  {syncing ? '⏳ Syncing Assets...' : '🔄 Sync Assets to Cloudinary'}
+                </button>
+                {syncProgress && (
+                  <div style={{ marginTop: '12px', fontSize: '12px', color: '#2563eb', fontWeight: '600', backgroundColor: '#eff6ff', padding: '8px 12px', borderRadius: '4px' }}>
+                    {syncProgress}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Instruction Guide */}
+            <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+              <h2 style={{ fontSize: '20px', color: '#111827', marginBottom: '20px', fontWeight: '700' }}>Cloudinary Setup Guide</h2>
+              <div style={{ fontSize: '14px', color: '#374151', lineHeight: '1.6' }}>
+                <p style={{ marginBottom: '12px' }}>
+                  To enable direct uploads of images and brochure PDFs from this admin console, you need to use an <strong>Unsigned Upload Preset</strong>. Follow these steps:
+                </p>
+                <ol style={{ paddingLeft: '20px', marginBottom: '16px' }}>
+                  <li style={{ marginBottom: '8px' }}>
+                    Create a free account or log in at <a href="https://cloudinary.com" target="_blank" rel="noreferrer" style={{ color: '#e60012', fontWeight: '600' }}>Cloudinary.com</a>.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Open your Cloudinary Console dashboard. Copy the <strong>Cloud Name</strong> displayed at the top.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Click on the <strong>Settings (Gear Icon)</strong> at the bottom left.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Select <strong>Upload</strong> from the settings menu.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Scroll down to <strong>Upload presets</strong> and click <strong>Add upload preset</strong>.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Change the <strong>Signing Mode</strong> from <em>Signed</em> to <strong>Unsigned</strong>.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    <em>Optional:</em> Specify a folder name (e.g. <code>mcs_assets</code>) where your files should be stored.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Click <strong>Save</strong> at the top right.
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    Copy the generated <strong>Upload Preset name</strong> (it will be a random alphanumeric string unless you renamed it) and paste it into the form on the left.
+                  </li>
+                </ol>
+                <div style={{ backgroundColor: '#fef3c7', border: '1px solid #fde68a', borderRadius: '4px', padding: '12px 16px', color: '#78350f', fontSize: '13px' }}>
+                  <strong>Note:</strong> Once configured, all newly selected files (from device or camera scans) will automatically upload to Cloudinary. Unconfigured environments will continue to save images as raw Base64 data strings.
+                </div>
               </div>
             </div>
           </div>
