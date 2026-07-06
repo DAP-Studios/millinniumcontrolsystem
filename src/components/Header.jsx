@@ -27,11 +27,10 @@ export default function Header() {
             <span className="logo-sub">Control System</span>
           </div>
         </Link>
-        <span className="company-name">MILLENNIUM CONTROL SYSTEM PVT. LTD.</span>
-        
+
         {/* Hamburger Icon */}
-        <button 
-          className="hamburger-btn" 
+        <button
+          className="hamburger-btn"
           onClick={handleToggleMenu}
           aria-label="Toggle navigation menu"
           style={{ display: 'none', marginLeft: 'auto', outline: 'none' }}
@@ -52,9 +51,9 @@ export default function Header() {
             </li>
             <li className="nav-item dropdown-parent">
               <Link to="/products" className={`nav-link ${isActive('/products')}`} onClick={handleLinkClick}>
-                Products 
+                Products
                 <svg viewBox="0 0 24 24" style={{ width: '12px', height: '12px', marginLeft: '4px' }}>
-                  <path d="M7 10l5 5 5-5z" fill="currentColor"/>
+                  <path d="M7 10l5 5 5-5z" fill="currentColor" />
                 </svg>
               </Link>
               <ul className="dropdown">
@@ -86,7 +85,7 @@ export default function Header() {
           <span style={{ color: '#ccc' }}>|</span>
           <Link to="/contact" className="inquiries-link">Inquiries</Link>
           <a href="#" className="globe-btn" aria-label="Language">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
           </a>
         </div>
       </div>
