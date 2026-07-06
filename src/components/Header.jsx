@@ -6,15 +6,18 @@ export default function Header() {
   const location = useLocation();
   const { categories } = useData();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
   const handleToggleMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+    setMobileDropdownOpen(false);
   };
 
   const handleLinkClick = () => {
     setMobileMenuOpen(false);
+    setMobileDropdownOpen(false);
   };
 
   return (
@@ -50,13 +53,33 @@ export default function Header() {
               <Link to="/" className={`nav-link ${isActive('/')}`} onClick={handleLinkClick}>Home</Link>
             </li>
             <li className="nav-item dropdown-parent">
-              <Link to="/products" className={`nav-link ${isActive('/products')}`} onClick={handleLinkClick}>
+              <Link
+                to="/products"
+                className={`nav-link ${isActive('/products')}`}
+                onClick={(e) => {
+                  if (window.innerWidth <= 992) {
+                    e.preventDefault();
+                    setMobileDropdownOpen(!mobileDropdownOpen);
+                  } else {
+                    handleLinkClick();
+                  }
+                }}
+              >
                 Products
-                <svg viewBox="0 0 24 24" style={{ width: '12px', height: '12px', marginLeft: '4px' }}>
+                <svg
+                  viewBox="0 0 24 24"
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    marginLeft: '4px',
+                    transform: mobileDropdownOpen ? 'rotate(180deg)' : 'none',
+                    transition: 'transform 0.2s ease'
+                  }}
+                >
                   <path d="M7 10l5 5 5-5z" fill="currentColor" />
                 </svg>
               </Link>
-              <ul className="dropdown">
+              <ul className={`dropdown ${mobileDropdownOpen ? 'mobile-open' : ''}`}>
                 {categories.map((cat) => (
                   <li key={cat.id}>
                     <Link to={`/products?category=${cat.id}`} onClick={handleLinkClick}>

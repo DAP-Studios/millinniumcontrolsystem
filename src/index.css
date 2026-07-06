@@ -727,14 +727,22 @@ footer{background:#1a1f2e;color:#a0a8c0}
 
   .dropdown {
     position: static;
-    opacity: 1;
-    visibility: visible;
+    opacity: 0;
+    visibility: hidden;
+    display: none;
     transform: none;
     box-shadow: none;
     border-left: 2px solid var(--red);
     border-top: none;
     background: #fafafa;
     margin-left: 16px;
+    margin-top: 0;
+  }
+
+  .dropdown.mobile-open {
+    opacity: 1;
+    visibility: visible;
+    display: block;
     margin-top: 8px;
   }
 
