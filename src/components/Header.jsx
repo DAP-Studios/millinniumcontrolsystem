@@ -81,11 +81,12 @@ export default function Header() {
         </nav>
 
         <div className="header-right">
-          <Link to="/about" className="about-link">About us</Link>
-          <span style={{ color: '#ccc' }}>|</span>
-          <Link to="/contact" className="inquiries-link">Inquiries</Link>
-          <a href="#" className="globe-btn" aria-label="Language">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+          <a
+            href="/brochures/goc_goc35_catalogue-pdf.pdf"
+            download="Millennium-Control-System-Catalogue.pdf"
+            className="download-btn"
+          >
+            Download
           </a>
         </div>
       </div>
