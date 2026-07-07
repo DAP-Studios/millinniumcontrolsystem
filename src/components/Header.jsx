@@ -36,7 +36,7 @@ export default function Header() {
           className="hamburger-btn"
           onClick={handleToggleMenu}
           aria-label="Toggle navigation menu"
-          style={{ display: 'none', marginLeft: 'auto', outline: 'none' }}
+          style={{ marginLeft: 'auto', outline: 'none' }}
         >
           <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             {mobileMenuOpen ? (

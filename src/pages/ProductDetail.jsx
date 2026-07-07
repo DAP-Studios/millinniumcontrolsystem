@@ -83,21 +83,10 @@ export default function ProductDetail() {
       <div style={{ maxWidth: '1200px', margin: '40px auto 0', padding: '0 20px' }}>
         
         {/* Two-Column Top Section */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '40px', alignItems: 'stretch', marginBottom: '50px' }}>
+        <div className="product-detail-grid" style={{ marginBottom: '50px' }}>
           
           {/* Left Column: Mockup Visual card */}
-          <div style={{ 
-            background: '#f3f4f6', 
-            border: '1px solid #e5e7eb', 
-            borderRadius: '4px', 
-            height: '380px', 
-            display: 'flex', 
-            flexDirection: 'column',
-            justifyContent: 'center', 
-            alignItems: 'center',
-            textAlign: 'center',
-            padding: '24px'
-          }}>
+          <div className="product-detail-visual-card">
             {product.imageUrl && product.imageUrl !== '/images/products/default.jpg' ? (
               <img 
                 src={product.imageUrl} 
@@ -209,7 +198,7 @@ export default function ProductDetail() {
 
         {/* Tabbed Info Section */}
         <div>
-          <div style={{ display: 'flex', borderBottom: '2px solid #e2e8f0', marginBottom: '24px' }}>
+          <div className="responsive-tabs-header">
             <button
               onClick={() => setActiveTab('overview')}
               style={{
@@ -293,7 +282,7 @@ export default function ProductDetail() {
 
             {/* Media & Downloads Tab Content */}
             {activeTab === 'media' && (
-              <div style={{ animation: 'fadeIn 0.3s ease', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '40px' }}>
+              <div className="product-detail-media-grid" style={{ animation: 'fadeIn 0.3s ease' }}>
                 {/* YouTube Video Section */}
                 <div>
                   <h4 style={{ fontSize: '16px', color: '#0f172a', fontWeight: '700', marginBottom: '12px' }}>Functional & Application Video</h4>

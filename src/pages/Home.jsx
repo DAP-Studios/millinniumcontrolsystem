@@ -195,7 +195,7 @@ export default function Home() {
             <div className="box-dark"></div>
           </div>
         </div>
-        <div style={{ position: 'absolute', bottom: '40px', left: '60px', zIndex: 3 }}>
+        <div className="hero-tagline-wrap">
           <Link to="/about" className="hero-tagline-link">
             "Automating the World" – A global approach in Pune & India.
           </Link>
