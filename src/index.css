@@ -1543,6 +1543,7 @@ footer{background:#1a1f2e;color:#a0a8c0}
   justify-content: center;
 }
 .hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.18);
   color: rgba(255,255,255,0.85);
@@ -1550,17 +1551,7 @@ footer{background:#1a1f2e;color:#a0a8c0}
   padding: 6px 14px; border-radius: 20px;
 }
 
-/* ── Breadcrumb ── */
-.about-breadcrumb {
-  background: var(--gray); border-bottom: 1px solid var(--border);
-  padding: 10px 24px;
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; color: var(--muted);
-}
-.about-breadcrumb a { color: var(--muted); transition: color .2s; }
-.about-breadcrumb a:hover { color: var(--red); }
-.bc-sep { color: var(--muted); }
-.bc-active { color: var(--red); font-weight: 600; }
+
 
 /* ── Stats Bar ── */
 .about-stats-bar {
@@ -1769,7 +1760,7 @@ footer{background:#1a1f2e;color:#a0a8c0}
   box-shadow: 0 12px 30px rgba(230,0,18,0.1);
   border-color: var(--red);
 }
-.prod-icon { font-size: 32px; line-height: 1; }
+.prod-icon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 10px; background: rgba(230,0,18,0.08); color: var(--red); }
 .prod-name { font-size: 14px; font-weight: 700; color: var(--navy); }
 .prod-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
 
@@ -1796,7 +1787,7 @@ footer{background:#1a1f2e;color:#a0a8c0}
   background: rgba(255,255,255,0.1);
   border-color: rgba(230,0,18,0.5);
 }
-.why-icon { font-size: 32px; margin-bottom: 14px; }
+.why-icon { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 12px; background: rgba(255,255,255,0.12); color: #ff9faa; margin-bottom: 14px; }
 .why-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; }
 .why-desc { font-size: 13px; color: rgba(255,255,255,0.68); line-height: 1.6; }
 
@@ -1819,7 +1810,10 @@ footer{background:#1a1f2e;color:#a0a8c0}
   background: linear-gradient(135deg, #b3000f 0%, var(--red) 100%);
 }
 .mv-icon-wrap {
-  font-size: 40px; margin-bottom: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 60px; height: 60px; border-radius: 14px;
+  background: rgba(255,255,255,0.15); color: #fff;
+  margin-bottom: 16px;
 }
 .mv-title {
   font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 14px;
@@ -1851,6 +1845,7 @@ footer{background:#1a1f2e;color:#a0a8c0}
 }
 .about-contact-btn:hover { background: var(--dark-red); color: #fff; }
 .about-contact-phone {
+  display: inline-flex; align-items: center; gap: 6px;
   color: rgba(255,255,255,0.85); font-size: 15px; font-weight: 600;
   text-decoration: none; white-space: nowrap;
   transition: color .2s;

@@ -1,4 +1,24 @@
 import { useState } from "react";
+import {
+  Zap,
+  Cpu,
+  Lightbulb,
+  Monitor,
+  Settings,
+  Sliders,
+  Wrench,
+  Radio,
+  LayoutGrid,
+  Trophy,
+  BadgeDollarSign,
+  Truck,
+  Handshake,
+  CreditCard,
+  Phone,
+  Target,
+  Rocket,
+  CheckCircle,
+} from "lucide-react";
 import useSEO from "../hooks/useSEO";
 
 const FACTSHEET = [
@@ -20,15 +40,15 @@ const FACTSHEET = [
 ];
 
 const PRODUCTS = [
-  { name: "Mitsubishi AC Drive", icon: "⚡", desc: "FR-D740, FR-D720S, FR-A840 series" },
-  { name: "Mitsubishi PLC", icon: "🔌", desc: "Q Series, FX5U, FX3U series" },
-  { name: "FX5U PLC", icon: "💡", desc: "FX5U-32MT/ESS, FX5U-64MR/ES" },
-  { name: "Mitsubishi HMI", icon: "🖥️", desc: "GS2107-WTBD-N, GT2107-WTBD" },
-  { name: "Mitsubishi Servo Motor", icon: "⚙️", desc: "MR-JE-70AS, HG-KN73JK series" },
-  { name: "Mitsubishi GOC", icon: "🎛️", desc: "GC35MH-16MT-DS, GC35MH-32MR-D" },
-  { name: "Servo Motor & Drive", icon: "🔧", desc: "HG-KN/HG-SN series combos" },
-  { name: "FX3U PLC", icon: "📡", desc: "FX3U-CNV-BD, FX3U-232BD" },
-  { name: "Mitsubishi Module", icon: "🔷", desc: "FX5-8EX/ES, FX5-8AD modules" },
+  { name: "Mitsubishi AC Drive", Icon: Zap, desc: "FR-D740, FR-D720S, FR-A840 series" },
+  { name: "Mitsubishi PLC", Icon: Cpu, desc: "Q Series, FX5U, FX3U series" },
+  { name: "FX5U PLC", Icon: Lightbulb, desc: "FX5U-32MT/ESS, FX5U-64MR/ES" },
+  { name: "Mitsubishi HMI", Icon: Monitor, desc: "GS2107-WTBD-N, GT2107-WTBD" },
+  { name: "Mitsubishi Servo Motor", Icon: Settings, desc: "MR-JE-70AS, HG-KN73JK series" },
+  { name: "Mitsubishi GOC", Icon: Sliders, desc: "GC35MH-16MT-DS, GC35MH-32MR-D" },
+  { name: "Servo Motor & Drive", Icon: Wrench, desc: "HG-KN/HG-SN series combos" },
+  { name: "FX3U PLC", Icon: Radio, desc: "FX3U-CNV-BD, FX3U-232BD" },
+  { name: "Mitsubishi Module", Icon: LayoutGrid, desc: "FX5-8EX/ES, FX5-8AD modules" },
 ];
 
 const STATS = [
@@ -41,32 +61,32 @@ const STATS = [
 
 const WHY_US = [
   {
-    icon: "🏆",
+    Icon: Trophy,
     title: "Premium Quality",
     desc: "All products sourced from Mitsubishi Electric — Japan's leading industrial automation brand.",
   },
   {
-    icon: "💰",
+    Icon: BadgeDollarSign,
     title: "Competitive Pricing",
     desc: "Direct manufacturer & authorized trader ensuring best-in-market prices for all clients.",
   },
   {
-    icon: "🚚",
+    Icon: Truck,
     title: "Timely Delivery",
     desc: "Fast, reliable road shipments across Gujarat and pan-India with zero compromise on timelines.",
   },
   {
-    icon: "🤝",
+    Icon: Handshake,
     title: "TrustSEAL Verified",
     desc: "IndiaMART TrustSEAL verified business with GST registration since 2017.",
   },
   {
-    icon: "💳",
+    Icon: CreditCard,
     title: "Flexible Payments",
     desc: "Accept Cash, Credit Card, Bank Transfer, Cheque, DD, Online & Invoice payments.",
   },
   {
-    icon: "📞",
+    Icon: Phone,
     title: "75% Response Rate",
     desc: "High response rate ensuring your queries are answered quickly and efficiently.",
   },
@@ -99,19 +119,12 @@ export default function About() {
             automation &amp; control equipment
           </p>
           <div className="about-hero-tags">
-            <span className="hero-tag">✔ TrustSEAL Verified</span>
-            <span className="hero-tag">✔ GST Registered</span>
-            <span className="hero-tag">✔ 75% Response Rate</span>
+            <span className="hero-tag"><CheckCircle size={14} strokeWidth={2.5} /> TrustSEAL Verified</span>
+            <span className="hero-tag"><CheckCircle size={14} strokeWidth={2.5} /> GST Registered</span>
+            <span className="hero-tag"><CheckCircle size={14} strokeWidth={2.5} /> 75% Response Rate</span>
           </div>
         </div>
       </section>
-
-      {/* ── BREADCRUMB ── */}
-      <nav className="about-breadcrumb" aria-label="Breadcrumb">
-        <a href="/">Home</a>
-        <span className="bc-sep">›</span>
-        <span className="bc-active">About Us</span>
-      </nav>
 
       {/* ── STATS BAR ── */}
       <section className="about-stats-bar">
@@ -147,7 +160,7 @@ export default function About() {
                 </div>
                 <div className="about-trust-badges">
                   <div className="about-trust-badge">
-                    <span className="trust-icon">✔</span>
+                    <span className="trust-icon"><CheckCircle size={16} strokeWidth={2.5} /></span>
                     <div>
                       <div className="trust-title">TrustSEAL Verified</div>
                       <div className="trust-sub">IndiaMART Member Since 2010</div>
@@ -160,7 +173,7 @@ export default function About() {
                 </div>
                 <div className="about-contact-quick">
                   <a href="tel:07942656614" className="quick-call-btn">
-                    <span>📞</span> 079-42656614
+                    <Phone size={15} strokeWidth={2} /> 079-42656614
                   </a>
                   <div className="response-rate-badge">75% Response Rate</div>
                 </div>
@@ -252,11 +265,11 @@ export default function About() {
             <div className="section-divider" />
           </div>
           <div className="about-products-grid">
-            {PRODUCTS.map((p) => (
-              <div key={p.name} className="about-product-card">
-                <span className="prod-icon">{p.icon}</span>
-                <span className="prod-name">{p.name}</span>
-                <span className="prod-desc">{p.desc}</span>
+            {PRODUCTS.map(({ name, Icon, desc }) => (
+              <div key={name} className="about-product-card">
+                <span className="prod-icon"><Icon size={24} strokeWidth={1.8} /></span>
+                <span className="prod-name">{name}</span>
+                <span className="prod-desc">{desc}</span>
               </div>
             ))}
           </div>
@@ -272,11 +285,11 @@ export default function About() {
             <div className="section-divider" />
           </div>
           <div className="why-us-grid">
-            {WHY_US.map((w) => (
-              <div key={w.title} className="why-us-card">
-                <div className="why-icon">{w.icon}</div>
-                <h3 className="why-title">{w.title}</h3>
-                <p className="why-desc">{w.desc}</p>
+            {WHY_US.map(({ Icon, title, desc }) => (
+              <div key={title} className="why-us-card">
+                <div className="why-icon"><Icon size={28} strokeWidth={1.8} /></div>
+                <h3 className="why-title">{title}</h3>
+                <p className="why-desc">{desc}</p>
               </div>
             ))}
           </div>
@@ -288,7 +301,7 @@ export default function About() {
         <div className="about-container">
           <div className="about-mv-grid">
             <div className="about-mv-card mv-mission">
-              <div className="mv-icon-wrap">🎯</div>
+              <div className="mv-icon-wrap"><Target size={32} strokeWidth={1.8} /></div>
               <h3 className="mv-title">Our Mission</h3>
               <p className="mv-body">
                 To provide reliable, high-quality Mitsubishi industrial automation and control
@@ -297,7 +310,7 @@ export default function About() {
               </p>
             </div>
             <div className="about-mv-card mv-vision">
-              <div className="mv-icon-wrap">🚀</div>
+              <div className="mv-icon-wrap"><Rocket size={32} strokeWidth={1.8} /></div>
               <h3 className="mv-title">Our Vision</h3>
               <p className="mv-body">
                 To become the most trusted name in industrial automation in Gujarat and across
@@ -321,7 +334,9 @@ export default function About() {
             </div>
             <div className="about-contact-right">
               <a href="/contact" className="about-contact-btn">Contact Us</a>
-              <a href="tel:07942656614" className="about-contact-phone">📞 079-42656614</a>
+              <a href="tel:07942656614" className="about-contact-phone">
+                <Phone size={16} strokeWidth={2} /> 079-42656614
+              </a>
             </div>
           </div>
         </div>
