@@ -98,6 +98,9 @@ export default function Header() {
               <Link to="/about" className={`nav-link ${isActive('/about')}`} onClick={handleLinkClick}>About Us</Link>
             </li>
             <li className="nav-item">
+              <Link to="/infrastructure" className={`nav-link ${isActive('/infrastructure')}`} onClick={handleLinkClick}>Infrastructure</Link>
+            </li>
+            <li className="nav-item">
               <Link to="/contact" className={`nav-link ${isActive('/contact')}`} onClick={handleLinkClick}>Contact Us</Link>
             </li>
           </ul>
