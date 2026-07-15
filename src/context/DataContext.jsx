@@ -3,23 +3,70 @@ import { initialCategories, initialProducts } from '../data/productsData';
 
 const DataContext = createContext(null);
 
+// Helper to clean categories (filters out config leaks and handles basic deduplication)
+const cleanCategories = (cats) => {
+  if (!Array.isArray(cats)) return [];
+  const seenNames = new Set();
+  const seenIds = new Set();
+  
+  return cats.filter(cat => {
+    if (!cat || !cat.id || !cat.name) return false;
+    const id = cat.id.toLowerCase();
+    const name = cat.name.toLowerCase();
+    
+    // Filter out Cloudinary placeholders and config leaks
+    if (id.includes('cloud_name') || id.includes('upload_preset') || id.includes('cloudinary') || id.includes('preset') || id.includes('your_')) return false;
+    if (name.includes('cloud_name') || name.includes('upload_preset') || name.includes('cloudinary') || name.includes('preset') || name.includes('your_')) return false;
+    
+    if (seenNames.has(name) || seenIds.has(cat.id)) return false;
+    
+    seenNames.add(name);
+    seenIds.add(cat.id);
+    return true;
+  });
+};
+
+// Helper to clean products (filters out config leaks and duplicate product listings)
+const cleanProducts = (prods, validCategoryIds) => {
+  if (!Array.isArray(prods)) return [];
+  const seenNames = new Set();
+  const seenIds = new Set();
+  
+  return prods.filter(prod => {
+    if (!prod || !prod.id || !prod.name) return false;
+    const id = prod.id.toLowerCase();
+    const name = prod.name.toLowerCase();
+    
+    // Filter out config leaks
+    if (id.includes('cloud_name') || id.includes('upload_preset') || id.includes('cloudinary') || id.includes('preset') || id.includes('your_')) return false;
+    if (name.includes('cloud_name') || name.includes('upload_preset') || name.includes('cloudinary') || name.includes('preset') || name.includes('your_')) return false;
+    
+    // Verify valid category assignment if specified
+    if (prod.categorySlug && !validCategoryIds.has(prod.categorySlug)) return false;
+    
+    // Deduplicate by normalized name and ID
+    if (seenNames.has(name) || seenIds.has(prod.id)) return false;
+    
+    seenNames.add(name);
+    seenIds.add(prod.id);
+    return true;
+  });
+};
+
 export function DataProvider({ children }) {
   const [categories, setCategories] = useState(() => {
+    const defaultCats = cleanCategories(initialCategories);
     try {
       const stored = localStorage.getItem('mcs_categories');
       if (stored) {
-        const storedCats = JSON.parse(stored);
-        const merged = [];
-        const handledIds = new Set();
-        
-        for (const cat of initialCategories) {
-          merged.push(cat);
-          handledIds.add(cat.id);
-        }
+        const storedCats = cleanCategories(JSON.parse(stored));
+        const merged = [...defaultCats];
+        const handledIds = new Set(defaultCats.map(c => c.id));
         
         for (const cat of storedCats) {
           if (!handledIds.has(cat.id)) {
             merged.push(cat);
+            handledIds.add(cat.id);
           }
         }
         return merged;
@@ -27,25 +74,35 @@ export function DataProvider({ children }) {
     } catch (e) {
       console.error("Error reading categories from localStorage", e);
     }
-    return initialCategories;
+    return defaultCats;
   });
 
   const [products, setProducts] = useState(() => {
+    // Get valid category IDs to ensure products don't point to cleaned-up/deleted categories
+    const validCategoryIds = new Set(cleanCategories(initialCategories).map(c => c.id));
+    
+    // If we loaded categories from localStorage, merge those valid IDs too
+    try {
+      const storedCatsStr = localStorage.getItem('mcs_categories');
+      if (storedCatsStr) {
+        cleanCategories(JSON.parse(storedCatsStr)).forEach(c => validCategoryIds.add(c.id));
+      }
+    } catch (e) {
+      // Ignored
+    }
+
+    const defaultProds = cleanProducts(initialProducts, validCategoryIds);
     try {
       const stored = localStorage.getItem('mcs_products');
       if (stored) {
-        const storedProds = JSON.parse(stored);
-        const merged = [];
-        const handledIds = new Set();
-        
-        for (const prod of initialProducts) {
-          merged.push(prod);
-          handledIds.add(prod.id);
-        }
+        const storedProds = cleanProducts(JSON.parse(stored), validCategoryIds);
+        const merged = [...defaultProds];
+        const handledIds = new Set(defaultProds.map(p => p.id));
         
         for (const prod of storedProds) {
           if (!handledIds.has(prod.id)) {
             merged.push(prod);
+            handledIds.add(prod.id);
           }
         }
         return merged;
@@ -53,7 +110,7 @@ export function DataProvider({ children }) {
     } catch (e) {
       console.error("Error reading products from localStorage", e);
     }
-    return initialProducts;
+    return defaultProds;
   });
 
   // Keep localStorage in sync

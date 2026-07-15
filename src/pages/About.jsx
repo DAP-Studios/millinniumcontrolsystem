@@ -18,6 +18,8 @@ import {
   Target,
   Rocket,
   CheckCircle,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import useSEO from "../hooks/useSEO";
 
@@ -249,8 +251,10 @@ export default function About() {
               className="factsheet-toggle-btn"
               onClick={() => setExpandedFact(!expandedFact)}
               aria-expanded={expandedFact}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
-              {expandedFact ? "Show Less ▲" : `View All Details (${FACTSHEET.length - 8} more) ▼`}
+              {expandedFact ? "Show Less" : `View All Details (${FACTSHEET.length - 8} more)`}
+              {expandedFact ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
         </div>

@@ -501,7 +501,9 @@ export default function Infrastructure() {
               <div>
                 <h4 className="infra-address-title">Nashik Main Plant & HQ</h4>
                 <p className="infra-address-text">Nashik, Maharashtra, India</p>
-                <p className="infra-address-text">📞 +91 79426 56614</p>
+                <p className="infra-address-text" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <Phone size={13} style={{ color: 'var(--accent-red)' }} /> +91 79426 56614
+                </p>
               </div>
             </div>
             <div className="infra-address-card">
@@ -509,7 +511,9 @@ export default function Infrastructure() {
               <div>
                 <h4 className="infra-address-title">Pune Factory – Chakan MIDC</h4>
                 <p className="infra-address-text">Gat No. 773, Chakan MIDC, Pune – 410501</p>
-                <p className="infra-address-text">📞 +91 93072 86656</p>
+                <p className="infra-address-text" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <Phone size={13} style={{ color: 'var(--accent-red)' }} /> +91 93072 86656
+                </p>
               </div>
             </div>
             <div className="infra-address-card">

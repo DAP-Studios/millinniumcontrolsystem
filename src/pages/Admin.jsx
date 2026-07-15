@@ -1,6 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import useSEO from '../hooks/useSEO';
+import { 
+  Video, 
+  Camera, 
+  Check, 
+  AlertTriangle, 
+  Loader2, 
+  RefreshCw, 
+  Trash2, 
+  Plus, 
+  CheckCircle,
+  FileDown
+} from 'lucide-react';
 
 // Reusable Camera Helper Component for Webcam Capture
 function CameraCapture({ onCapture, label, isPdfMode }) {
@@ -63,9 +75,9 @@ function CameraCapture({ onCapture, label, isPdfMode }) {
         <button 
           type="button" 
           onClick={startCamera} 
-          style={{ background: '#0f172a', color: '#fff', fontSize: '12px', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}
+          style={{ background: '#0f172a', color: '#fff', fontSize: '12px', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
-          🎥 Start Webcam
+          <Video size={14} /> Start Webcam
         </button>
       )}
 
@@ -81,9 +93,9 @@ function CameraCapture({ onCapture, label, isPdfMode }) {
             <button 
               type="button" 
               onClick={capturePhoto} 
-              style={{ background: '#e60012', color: '#fff', fontSize: '12px', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}
+              style={{ background: '#e60012', color: '#fff', fontSize: '12px', padding: '6px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              📷 Take Snapshot
+              <Camera size={14} /> Take Snapshot
             </button>
             <button 
               type="button" 
@@ -103,8 +115,8 @@ function CameraCapture({ onCapture, label, isPdfMode }) {
             alt="Captured preview" 
             style={{ width: '100%', maxWidth: '160px', borderRadius: '4px', border: '1px solid #cbd5e1', marginBottom: '8px' }} 
           />
-          <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: '600', marginBottom: '8px' }}>
-            ✓ Snapshot Captured Successfully
+          <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: '600', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Check size={14} /> Snapshot Captured Successfully
           </div>
           <div>
             <button 
@@ -581,7 +593,7 @@ export default function Admin() {
     <div className="admin-page" style={{ paddingBottom: '80px' }}>
       
       {/* Page Title */}
-      <div className="page-header" style={{ background: 'linear-gradient(135deg, #111827, #1f2937)', padding: '50px 24px', textAlign: 'center', color: '#fff' }}>
+      <div className="page-header" style={{ background: 'var(--primary-navy)', padding: '50px 24px', textAlign: 'center', color: '#fff' }}>
         <h1 style={{ fontSize: '32px', marginBottom: '8px', fontWeight: '700' }}>Admin Console</h1>
         <p style={{ color: '#9ca3af', fontSize: '16px' }}>Manage Categories and Products dynamically</p>
       </div>
@@ -650,9 +662,13 @@ export default function Admin() {
             fontSize: '14px',
             backgroundColor: alert.type === 'success' ? '#def7ec' : '#fde8e8',
             color: alert.type === 'success' ? '#03543f' : '#9b1c1c',
-            border: `1px solid ${alert.type === 'success' ? '#bcf0da' : '#f8b4b4'}`
+            border: `1px solid ${alert.type === 'success' ? '#bcf0da' : '#f8b4b4'}`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
           }}>
-            {alert.type === 'success' ? '✓ ' : '⚠ '} {alert.message}
+            {alert.type === 'success' ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
+            {alert.message}
           </div>
         )}
 
@@ -660,7 +676,7 @@ export default function Admin() {
             1. CATEGORIES CONSOLE
             ---------------------------------------------------- */}
         {activeConsole === 'categories' && (
-          <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '40px' }}>
+          <div className="admin-grid">
             {/* Form */}
             <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h2 style={{ fontSize: '20px', color: '#111827', marginBottom: '20px', fontWeight: '700', borderBottom: '2px solid #e60012', paddingBottom: '8px', display: 'inline-block' }}>
@@ -705,18 +721,18 @@ export default function Admin() {
                   {catImgMode === 'device' && (
                     <div>
                       <input type="file" accept="image/*" onChange={(e) => handleFileChangeAndUpload(e, setCatImgFile, setCatImgUploading, 'Category Image')} style={{ fontSize: '13px' }} />
-                      {catImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading to Cloudinary...</div>}
+                      {catImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>Uploading to Cloudinary...</div>}
                       {!catImgUploading && catImgFile && catImgFile.startsWith('https://res.cloudinary.com') && (
-                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>Uploaded to Cloudinary</div>
                       )}
                     </div>
                   )}
                   {catImgMode === 'capture' && (
                     <div>
                       <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setCatImgCap, setCatImgUploading, 'Category Image')} label="Capture Image" isPdfMode={false} />
-                      {catImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading snapshot to Cloudinary...</div>}
+                      {catImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>Uploading snapshot to Cloudinary...</div>}
                       {!catImgUploading && catImgCap && catImgCap.startsWith('https://res.cloudinary.com') && (
-                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Snapshot uploaded to Cloudinary</div>
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>Snapshot uploaded to Cloudinary</div>
                       )}
                     </div>
                   )}
@@ -736,18 +752,18 @@ export default function Admin() {
                   {catBroMode === 'device' && (
                     <div>
                       <input type="file" accept="application/pdf,image/*" onChange={(e) => handleFileChangeAndUpload(e, setCatBroFile, setCatBroUploading, 'Category Brochure PDF')} style={{ fontSize: '13px' }} />
-                      {catBroUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading PDF/Image to Cloudinary...</div>}
+                      {catBroUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>Uploading PDF/Image to Cloudinary...</div>}
                       {!catBroUploading && catBroFile && catBroFile.startsWith('https://res.cloudinary.com') && (
-                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>Uploaded to Cloudinary</div>
                       )}
                     </div>
                   )}
                   {catBroMode === 'capture' && (
                     <div>
                       <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setCatBroCap, setCatBroUploading, 'Category Brochure PDF')} label="Scan Brochure Sheet" isPdfMode={true} />
-                      {catBroUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading scan to Cloudinary...</div>}
+                      {catBroUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>Uploading scan to Cloudinary...</div>}
                       {!catBroUploading && catBroCap && catBroCap.startsWith('https://res.cloudinary.com') && (
-                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Scan uploaded to Cloudinary</div>
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>Scan uploaded to Cloudinary</div>
                       )}
                     </div>
                   )}
@@ -794,7 +810,7 @@ export default function Admin() {
             2. PRODUCTS CONSOLE
             ---------------------------------------------------- */}
         {activeConsole === 'products' && (
-          <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1.7fr', gap: '40px' }}>
+          <div className="admin-grid">
             {/* Form */}
             <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h2 style={{ fontSize: '20px', color: '#111827', marginBottom: '20px', fontWeight: '700', borderBottom: '2px solid #e60012', paddingBottom: '8px', display: 'inline-block' }}>
@@ -873,18 +889,18 @@ export default function Admin() {
                       {inlineCatImgMode === 'device' && (
                         <div>
                           <input type="file" accept="image/*" onChange={(e) => handleFileChangeAndUpload(e, setInlineCatImgFile, setInlineCatImgUploading, 'Inline Category Image')} style={{ fontSize: '11px' }} />
-                          {inlineCatImgUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading to Cloudinary...</div>}
+                          {inlineCatImgUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>Uploading to Cloudinary...</div>}
                           {!inlineCatImgUploading && inlineCatImgFile && inlineCatImgFile.startsWith('https://res.cloudinary.com') && (
-                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>Uploaded to Cloudinary</div>
                           )}
                         </div>
                       )}
                       {inlineCatImgMode === 'capture' && (
                         <div>
                           <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setInlineCatImgCap, setInlineCatImgUploading, 'Inline Category Image')} label="Capture Image" isPdfMode={false} />
-                          {inlineCatImgUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading snapshot to Cloudinary...</div>}
+                          {inlineCatImgUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>Uploading snapshot to Cloudinary...</div>}
                           {!inlineCatImgUploading && inlineCatImgCap && inlineCatImgCap.startsWith('https://res.cloudinary.com') && (
-                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Snapshot uploaded to Cloudinary</div>
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>Snapshot uploaded to Cloudinary</div>
                           )}
                         </div>
                       )}
@@ -904,18 +920,18 @@ export default function Admin() {
                       {inlineCatBroMode === 'device' && (
                         <div>
                           <input type="file" accept="application/pdf,image/*" onChange={(e) => handleFileChangeAndUpload(e, setInlineCatBroFile, setInlineCatBroUploading, 'Inline Category Brochure PDF')} style={{ fontSize: '11px' }} />
-                          {inlineCatBroUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading PDF/Image to Cloudinary...</div>}
+                          {inlineCatBroUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>Uploading PDF/Image to Cloudinary...</div>}
                           {!inlineCatBroUploading && inlineCatBroFile && inlineCatBroFile.startsWith('https://res.cloudinary.com') && (
-                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>Uploaded to Cloudinary</div>
                           )}
                         </div>
                       )}
                       {inlineCatBroMode === 'capture' && (
                         <div>
                           <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setInlineCatBroCap, setInlineCatBroUploading, 'Inline Category Brochure PDF')} label="Scan brochure sheet" isPdfMode={true} />
-                          {inlineCatBroUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>⏳ Uploading scan to Cloudinary...</div>}
+                          {inlineCatBroUploading && <div style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>Uploading scan to Cloudinary...</div>}
                           {!inlineCatBroUploading && inlineCatBroCap && inlineCatBroCap.startsWith('https://res.cloudinary.com') && (
-                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>✓ Scan uploaded to Cloudinary</div>
+                            <div style={{ fontSize: '11px', color: '#15803d', marginTop: '4px' }}>Scan uploaded to Cloudinary</div>
                           )}
                         </div>
                       )}
@@ -961,18 +977,18 @@ export default function Admin() {
                   {prodImgMode === 'device' && (
                     <div>
                       <input type="file" accept="image/*" onChange={(e) => handleFileChangeAndUpload(e, setProdImgFile, setProdImgUploading, 'Product Image')} style={{ fontSize: '13px' }} />
-                      {prodImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading to Cloudinary...</div>}
+                      {prodImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>Uploading to Cloudinary...</div>}
                       {!prodImgUploading && prodImgFile && prodImgFile.startsWith('https://res.cloudinary.com') && (
-                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Uploaded to Cloudinary</div>
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>Uploaded to Cloudinary</div>
                       )}
                     </div>
                   )}
                   {prodImgMode === 'capture' && (
                     <div>
                       <CameraCapture onCapture={(dataUrl) => handleCameraCaptureAndUpload(dataUrl, setProdImgCap, setProdImgUploading, 'Product Image')} label="Capture Product Image" isPdfMode={false} />
-                      {prodImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>⏳ Uploading snapshot to Cloudinary...</div>}
+                      {prodImgUploading && <div style={{ fontSize: '12px', color: '#3b82f6', marginTop: '4px' }}>Uploading snapshot to Cloudinary...</div>}
                       {!prodImgUploading && prodImgCap && prodImgCap.startsWith('https://res.cloudinary.com') && (
-                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>✓ Snapshot uploaded to Cloudinary</div>
+                        <div style={{ fontSize: '12px', color: '#16a34a', marginTop: '4px' }}>Snapshot uploaded to Cloudinary</div>
                       )}
                     </div>
                   )}
@@ -1053,7 +1069,7 @@ export default function Admin() {
         )}
 
         {activeConsole === 'cloudinary' && (
-          <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '40px' }}>
+          <div className="admin-grid">
             {/* Form */}
             <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h2 style={{ fontSize: '20px', color: '#111827', marginBottom: '20px', fontWeight: '700', borderBottom: '2px solid #e60012', paddingBottom: '8px', display: 'inline-block' }}>
@@ -1101,7 +1117,7 @@ export default function Admin() {
                     disabled={testingConnection}
                     style={{ flex: 1, backgroundColor: '#0f172a', color: '#fff', padding: '12px', fontWeight: '600', borderRadius: '4px', border: 'none', cursor: 'pointer', opacity: testingConnection ? 0.7 : 1 }}
                   >
-                    {testingConnection ? '⏳ Testing...' : '🧪 Test Connection'}
+                    {testingConnection ? 'Testing...' : 'Test Connection'}
                   </button>
                 </div>
               </form>
@@ -1118,7 +1134,7 @@ export default function Admin() {
                   disabled={syncing}
                   style={{ width: '100%', backgroundColor: '#2563eb', color: '#fff', padding: '12px', fontWeight: '600', borderRadius: '4px', border: 'none', cursor: 'pointer', opacity: syncing ? 0.7 : 1 }}
                 >
-                  {syncing ? '⏳ Syncing Assets...' : '🔄 Sync Assets to Cloudinary'}
+                  {syncing ? 'Syncing Assets...' : 'Sync Assets to Cloudinary'}
                 </button>
                 {syncProgress && (
                   <div style={{ marginTop: '12px', fontSize: '12px', color: '#2563eb', fontWeight: '600', backgroundColor: '#eff6ff', padding: '8px 12px', borderRadius: '4px' }}>
