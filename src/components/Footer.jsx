@@ -1,72 +1,85 @@
 import { Link } from 'react-router-dom';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Mail,
+  MapPin,
+  Phone,
+} from 'lucide-react';
+
+const productLinks = [
+  ['PLCs & Controllers', 'melsec-fx5u-series'],
+  ['VFD & AC Drives', 'inverters-vfd-ac-drive'],
+  ['HMIs & Displays', 'human-machine-interfaces-melhmi-got'],
+  ['Servo & Motion', 'melservo-ac-servo'],
+  ['Industrial Robots', 'industrial-robots'],
+];
 
 export default function Footer() {
   return (
-    <footer>
-      <div className="footer-follow">
-        <span className="footer-follow-label">Follow us</span>
-        <div className="footer-social-icons">
-          <a href="#" className="fsocial fsocial-yt">
-            <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
-          </a>
-          <a href="#" className="fsocial fsocial-fb">
-            <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-          </a>
-          <a href="#" className="fsocial fsocial-li">
-            <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-          </a>
+    <footer className="site-footer">
+      <div className="site-shell">
+        <div className="site-footer__cta">
+          <div>
+            <span className="site-kicker site-kicker--light">Have a production challenge?</span>
+            <h2>Let’s engineer the next move.</h2>
+          </div>
+          <Link to="/contact" className="site-footer__cta-button">
+            Start a conversation <ArrowRight size={18} />
+          </Link>
         </div>
-      </div>
-      <div className="footer-main">
-        <div className="footer-col">
-          <h4>Millennium CS</h4>
-          <ul>
-            <li><Link to="/about">About Us</Link></li>
-            <li><Link to="/about">Corporate Profile</Link></li>
-            <li><a href="#">Careers</a></li>
-            <li><Link to="/contact">Contact Us</Link></li>
-            <li><a href="#">Global Network</a></li>
-          </ul>
+
+        <div className="site-footer__grid">
+          <div className="site-footer__brand-column">
+            <Link className="site-brand site-brand--footer" to="/">
+              <span className="site-brand__mark">
+                <img src="/MCS - LOGO.png" alt="" />
+              </span>
+              <span className="site-brand__copy">
+                <strong>Millennium</strong>
+                <small>Control System</small>
+              </span>
+            </Link>
+            <p>
+              Industrial automation products and integration support that keep modern factories precise,
+              connected, and productive.
+            </p>
+            <div className="site-footer__contact-list">
+              <a href="tel:+916356732897"><Phone size={15} /> +91 63567 32897</a>
+              <a href="mailto:info2.millenniumcontrol@gmail.com"><Mail size={15} /> info2.millenniumcontrol@gmail.com</a>
+              <span><MapPin size={15} /> Vapi, Gujarat · Serving pan-India</span>
+            </div>
+          </div>
+
+          <div className="site-footer__link-column">
+            <h3>Company</h3>
+            <Link to="/about">About us</Link>
+            <Link to="/products">Product portfolio</Link>
+            <Link to="/contact">Contact</Link>
+            <a href="/brochures/goc_goc35_catalogue-pdf.pdf" download>Download catalogue</a>
+          </div>
+
+          <div className="site-footer__link-column site-footer__products">
+            <h3>Solutions</h3>
+            {productLinks.map(([label, category]) => (
+              <Link key={category} to={`/products?category=${category}`}>{label}</Link>
+            ))}
+          </div>
+
+          <div className="site-footer__brief">
+            <span>Engineering desk</span>
+            <h3>Need help selecting the right control architecture?</h3>
+            <p>Share your machine, I/O, motion, or drive requirement with our team.</p>
+            <Link to="/contact">Send your brief <ArrowUpRight size={15} /></Link>
+          </div>
         </div>
-        <div className="footer-col">
-          <h4>Solutions</h4>
-          <ul>
-            <li><a href="#">e-F@ctory</a></li>
-            <li><a href="#">Industries</a></li>
-            <li><a href="#">Competencies</a></li>
-            <li><a href="#">Case Studies</a></li>
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4>Products</h4>
-          <ul>
-            <li><Link to="/products">Controllers</Link></li>
-            <li><Link to="/products">Drive Products</Link></li>
-            <li><Link to="/products">HMI / GOT</Link></li>
-            <li><Link to="/products">Robots</Link></li>
-            <li><Link to="/products">CNC</Link></li>
-            <li><Link to="/products">All Products</Link></li>
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4>Support</h4>
-          <ul>
-            <li><a href="#">Technical Support</a></li>
-            <li><a href="#">Downloads</a></li>
-            <li><a href="#">Training</a></li>
-            <li><a href="#">Service Network</a></li>
-            <li><a href="#">FAQ</a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="footer-bottom">
-        <div className="footer-copy">&copy; 2025 Millennium Control System Pvt. Ltd. All rights reserved.</div>
-        <div className="footer-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Use</a>
-          <a href="#">Cookie Policy</a>
-          <a href="#">Sitemap</a>
-          <Link to="/admin" style={{ marginLeft: '12px', opacity: 0.6, fontSize: '11px', borderLeft: '1px solid #555', paddingLeft: '12px' }}>Admin Control</Link>
+
+        <div className="site-footer__bottom">
+          <span>© {new Date().getFullYear()} Millennium Control System. All rights reserved.</span>
+          <div>
+            <span>Established 2010</span>
+            <Link to="/admin">Admin</Link>
+          </div>
         </div>
       </div>
     </footer>

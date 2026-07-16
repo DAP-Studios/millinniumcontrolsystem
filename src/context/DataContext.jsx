@@ -87,7 +87,7 @@ export function DataProvider({ children }) {
       if (storedCatsStr) {
         cleanCategories(JSON.parse(storedCatsStr)).forEach(c => validCategoryIds.add(c.id));
       }
-    } catch (e) {
+    } catch {
       // Ignored
     }
 
@@ -209,6 +209,8 @@ export function DataProvider({ children }) {
   );
 }
 
+// Provider and its consumer hook intentionally share this small context module.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useData() {
   const context = useContext(DataContext);
   if (!context) {

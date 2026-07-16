@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import useSEO from '../hooks/useSEO';
 
 export default function Products() {
-  const navigate = useNavigate();
   const { categories, products } = useData();
   const [searchParams, setSearchParams] = useSearchParams();
 

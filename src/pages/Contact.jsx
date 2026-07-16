@@ -1,180 +1,253 @@
 import { useState } from 'react';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Clock3,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { Reveal } from '../components/Motion';
 import useSEO from '../hooks/useSEO';
+
+const CONTACT_DETAILS = [
+  {
+    icon: Phone,
+    label: 'Engineering line',
+    value: '+91 63567 32897',
+    href: 'tel:+916356732897',
+    note: 'Call or WhatsApp',
+  },
+  {
+    icon: Mail,
+    label: 'Project inquiries',
+    value: 'info2.millenniumcontrol@gmail.com',
+    href: 'mailto:info2.millenniumcontrol@gmail.com',
+    note: 'Technical briefs welcome',
+  },
+  {
+    icon: MapPin,
+    label: 'Registered office',
+    value: 'Royal Industrial Hub, Valvada, Vapi 396105',
+    href: 'https://www.google.com/maps/search/?api=1&query=Millennium+Control+System+Royal+Industrial+Hub+Valvada+Vapi+396105',
+    note: 'Gujarat, India',
+  },
+];
 
 export default function Contact() {
   const { categories } = useData();
-  const [submitted, setSubmitted] = useState(false);
-
-  // Form fields
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [interest, setInterest] = useState('');
-  const [message, setMessage] = useState('');
-
-  useSEO({
-    title: 'Inquiries & Technical Support | Millennium CS',
-    description: 'Get in touch with Millennium Control System engineers in Pune. Request quotes, get engineering assistance, or discuss smart plant integration.',
-    keywords: 'Automation Inquiries Pune, Tech support PLC, request quote VFD'
+  const [prepared, setPrepared] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    interest: '',
+    message: '',
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !email) return;
-    setSubmitted(true);
-    setName('');
-    setEmail('');
-    setInterest('');
-    setMessage('');
-    setTimeout(() => setSubmitted(false), 5000);
+  useSEO({
+    title: 'Contact Our Industrial Automation Team | Millennium CS',
+    description: 'Talk to Millennium Control System about Mitsubishi Electric PLC, VFD, HMI, servo, motion, robotics, and industrial automation requirements.',
+    keywords: 'industrial automation inquiry, Mitsubishi PLC quote, VFD support India, contact Millennium Control System',
+  });
+
+  const updateField = (event) => {
+    const { name, value } = event.target;
+    setPrepared(false);
+    setFormData((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const selectedCategory = categories.find((category) => category.id === formData.interest)?.name;
+    const subject = `Automation inquiry${selectedCategory ? ` — ${selectedCategory}` : ''}`;
+    const body = [
+      `Name: ${formData.name}`,
+      `Company: ${formData.company || 'Not provided'}`,
+      `Email: ${formData.email}`,
+      `Phone: ${formData.phone || 'Not provided'}`,
+      `Product / solution: ${selectedCategory || 'General automation requirement'}`,
+      '',
+      'Requirement:',
+      formData.message || 'Please contact me to discuss the application.',
+    ].join('\n');
+
+    setPrepared(true);
+    window.location.href = `mailto:info2.millenniumcontrol@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
-    <div className="contact-page">
-      <div className="page-header" style={{ background: 'linear-gradient(135deg, #1e293b, #0f172a)', padding: '50px 24px', color: '#fff', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '8px' }}>Contact Our Engineering Team</h1>
-        <p style={{ color: '#94a3b8', fontSize: '16px' }}>Request quotations, design consultations, or site-commissioning support</p>
-      </div>
-
-      <div className="page-content" style={{ padding: '60px 20px', maxWidth: '1000px', margin: '0 auto' }}>
-        <div className="contact-layout-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.5fr', gap: '50px', alignItems: 'start' }}>
-
-          {/* Office Address Card */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '4px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-            <h2 style={{ fontSize: '20px', color: '#0f172a', fontWeight: '700', marginBottom: '24px', borderBottom: '2px solid #e60012', paddingBottom: '6px', display: 'inline-block' }}>
-              Headquarters
-            </h2>
-
-            <div style={{ marginBottom: '24px' }}>
-              <h4 style={{ color: '#0f172a', marginBottom: '6px', fontSize: '15px', fontWeight: '700' }}>Millennium Control System Pvt. Ltd.</h4>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=Millennium+Control+System+Pvt.+Ltd.+Gala+no+51+royal+Industrial+hub+opp+jai+research+foundation+nh+no+08+valvada+vapi+Gujarat+India+396105"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-anchor-red"
-                style={{ textDecoration: 'none', color: 'inherit', display: 'flex', gap: '10px', alignItems: 'flex-start' }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#e60012', marginTop: '3px', flexShrink: 0, transition: 'transform 0.2s ease' }}>
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <p className="contact-interactive-link" style={{ color: '#475569', lineHeight: '1.6', fontSize: '14px', transition: 'color 0.2s ease', margin: 0 }}>
-                  Gala no 51 royal Industrial hub,<br />
-                  opp jai research foundation,n h no 08 valvada<br />
-                  vapi, Gujarat, India - 396105.
-                </p>
-              </a>
-            </div>
-
-            <div style={{ marginBottom: '24px' }}>
-              <h4 style={{ color: '#0f172a', marginBottom: '4px', fontSize: '14px', fontWeight: '700' }}>Phone Line</h4>
-              <a
-                href="https://wa.me/916356732897"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-anchor-whatsapp"
-                style={{ textDecoration: 'none', color: 'inherit', display: 'flex', gap: '10px', alignItems: 'center' }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#25D366', flexShrink: 0, transition: 'transform 0.2s ease' }}>
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
-                <p className="contact-interactive-link" style={{ color: '#475569', fontSize: '14px', transition: 'color 0.2s ease', margin: 0, display: 'flex', alignItems: 'center' }}>
-                  +91 63567 32897
-                  <span style={{ fontSize: '11px', color: '#25D366', backgroundColor: '#e8fdec', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px', fontWeight: '600' }}>WhatsApp</span>
-                </p>
-              </a>
-            </div>
-
+    <div className="contact-v2">
+      <section className="contact-v2__hero">
+        <div className="contact-v2__hero-grid" aria-hidden="true" />
+        <div className="site-shell contact-v2__hero-inner">
+          <Reveal className="contact-v2__hero-copy">
+            <span className="site-kicker site-kicker--light">Start with the application</span>
+            <h1>Tell us what the machine needs to do.</h1>
+            <p>
+              Share your control, drive, motion, HMI, or integration requirement. Our team will help
+              narrow the right technical path.
+            </p>
+          </Reveal>
+          <Reveal className="contact-v2__hero-note" delay={100} direction="right">
+            <Sparkles size={21} />
             <div>
-              <h4 style={{ color: '#0f172a', marginBottom: '4px', fontSize: '14px', fontWeight: '700' }}>Inquiries Email</h4>
-              <a
-                href="mailto:info2.millenniumcontrol@gmail.com"
-                className="contact-anchor-red"
-                style={{ textDecoration: 'none', color: 'inherit', display: 'flex', gap: '10px', alignItems: 'center' }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#e60012', flexShrink: 0, transition: 'transform 0.2s ease' }}>
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-                <p className="contact-interactive-link" style={{ color: '#475569', fontSize: '14px', transition: 'color 0.2s ease', margin: 0 }}>
-                  info2.millenniumcontrol@gmail.com
-                </p>
-              </a>
+              <span>Useful details</span>
+              <p>Machine type, motor rating, I/O count, communication protocol, and desired timeline.</p>
             </div>
-          </div>
+          </Reveal>
+        </div>
+      </section>
 
-          {/* Form Card */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '4px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-            <h2 style={{ fontSize: '20px', color: '#0f172a', fontWeight: '700', marginBottom: '24px' }}>Submit an Inquiry</h2>
+      <section className="contact-v2__main">
+        <div className="site-shell contact-v2__layout">
+          <Reveal className="contact-v2__form-card" direction="left">
+            <div className="contact-v2__form-head">
+              <div>
+                <span>Project brief</span>
+                <h2>What can we help you engineer?</h2>
+              </div>
+              <div className="contact-v2__secure"><ShieldCheck size={16} /> Direct to our team</div>
+            </div>
 
-            {submitted && (
-              <div style={{ padding: '12px 16px', backgroundColor: '#def7ec', color: '#03543f', borderRadius: '4px', border: '1px solid #bcf0da', fontWeight: '600', fontSize: '14px', marginBottom: '20px' }}>
-                ✓ Inquiry submitted successfully! Our automation desk will call you back shortly.
+            {prepared && (
+              <div className="contact-v2__notice" role="status">
+                <CheckCircle2 size={18} /> Your email app should open with a prepared inquiry. Review it, then send when ready.
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#334155', marginBottom: '6px' }}>Your Name *</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="John Doe"
-                  style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '14px' }}
-                  required
-                />
+            <form onSubmit={handleSubmit} className="contact-v2__form">
+              <div className="contact-v2__field-grid">
+                <label>
+                  <span>Your name *</span>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={updateField}
+                    placeholder="Your full name"
+                    autoComplete="name"
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Company</span>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={updateField}
+                    placeholder="Company name"
+                    autoComplete="organization"
+                  />
+                </label>
+                <label>
+                  <span>Work email *</span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={updateField}
+                    placeholder="name@company.com"
+                    autoComplete="email"
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Phone / WhatsApp</span>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={updateField}
+                    placeholder="+91"
+                    autoComplete="tel"
+                  />
+                </label>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#334155', marginBottom: '6px' }}>Your Corporate Email *</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="johndoe@company.com"
-                  style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '14px' }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#334155', marginBottom: '6px' }}>Product Interest</label>
-                <select
-                  value={interest}
-                  onChange={(e) => setInterest(e.target.value)}
-                  style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: '#fff', fontSize: '14px' }}
-                >
-                  <option value="">Select an Option</option>
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+              <label>
+                <span>Product or solution</span>
+                <select name="interest" value={formData.interest} onChange={updateField}>
+                  <option value="">Select a product family</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
                   ))}
-                  <option value="custom">General / Custom Commission Panel</option>
                 </select>
-              </div>
+              </label>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#334155', marginBottom: '6px' }}>Requirements Details</label>
+              <label>
+                <span>Application details</span>
                 <textarea
-                  rows="4"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Explain your machine specification, input/output points count, or requested service date..."
-                  style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '4px', resize: 'vertical', fontSize: '14px', fontFamily: 'inherit' }}
+                  name="message"
+                  rows="6"
+                  value={formData.message}
+                  onChange={updateField}
+                  placeholder="Tell us about the machine, current setup, key specifications, and what you want to improve..."
                 />
+              </label>
+
+              <div className="contact-v2__submit-row">
+                <button type="submit" className="button button--primary">
+                  Open email draft <Send size={16} />
+                </button>
+                <p>This prepares an email in your device’s mail app. Nothing is sent automatically.</p>
               </div>
-
-              <button
-                type="submit"
-                style={{ background: '#e60012', color: '#fff', padding: '14px', border: 'none', borderRadius: '4px', fontWeight: '700', cursor: 'pointer', transition: 'background-color 0.2s', fontSize: '14px' }}
-              >
-                Submit Inquiry
-              </button>
             </form>
-          </div>
+          </Reveal>
 
+          <aside className="contact-v2__aside">
+            <Reveal className="contact-v2__detail-card" direction="right">
+              <span className="site-kicker">Direct contact</span>
+              <h2>Reach the right desk.</h2>
+              <p>For a faster technical response, include model numbers or a photo of the existing panel where possible.</p>
+              <div className="contact-v2__details">
+                {CONTACT_DETAILS.map((detail) => {
+                  const Icon = detail.icon;
+                  return (
+                    <a key={detail.label} href={detail.href} target={detail.href.startsWith('http') ? '_blank' : undefined} rel={detail.href.startsWith('http') ? 'noreferrer' : undefined}>
+                      <div className="contact-v2__detail-icon"><Icon size={19} /></div>
+                      <div>
+                        <span>{detail.label}</span>
+                        <strong>{detail.value}</strong>
+                        <small>{detail.note}</small>
+                      </div>
+                      <ArrowRight size={16} />
+                    </a>
+                  );
+                })}
+              </div>
+            </Reveal>
+
+            <Reveal className="contact-v2__availability" direction="right" delay={100}>
+              <div><Clock3 size={20} /></div>
+              <div>
+                <span>Business hours</span>
+                <strong>Monday—Saturday</strong>
+                <p>09:30—18:30 IST</p>
+              </div>
+            </Reveal>
+
+            <Reveal className="contact-v2__whatsapp" direction="right" delay={160}>
+              <MessageCircle size={23} />
+              <div>
+                <span>Quick question?</span>
+                <strong>Continue on WhatsApp</strong>
+              </div>
+              <a href="https://wa.me/916356732897" target="_blank" rel="noreferrer" aria-label="Open WhatsApp chat">
+                <ArrowRight size={17} />
+              </a>
+            </Reveal>
+          </aside>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

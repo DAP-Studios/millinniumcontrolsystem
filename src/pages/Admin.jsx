@@ -6,12 +6,7 @@ import {
   Camera, 
   Check, 
   AlertTriangle, 
-  Loader2, 
-  RefreshCw, 
-  Trash2, 
-  Plus, 
   CheckCircle,
-  FileDown
 } from 'lucide-react';
 
 // Reusable Camera Helper Component for Webcam Capture
@@ -139,7 +134,6 @@ export default function Admin() {
     products, 
     addCategory, 
     deleteCategory, 
-    updateCategory, 
     addProduct, 
     deleteProduct,
     setCategories,

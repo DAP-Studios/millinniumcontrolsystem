@@ -208,10 +208,14 @@ function FacilityCarousel({ images, facilityId }) {
     setLightboxOpen(true);
   };
 
-  const closeLightbox = () => setLightboxOpen(false);
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
 
-  const lbPrev = () => setLightboxIndex((p) => (p - 1 + images.length) % images.length);
-  const lbNext = () => setLightboxIndex((p) => (p + 1) % images.length);
+  const lbPrev = useCallback(() => {
+    setLightboxIndex((p) => (p - 1 + images.length) % images.length);
+  }, [images.length]);
+  const lbNext = useCallback(() => {
+    setLightboxIndex((p) => (p + 1) % images.length);
+  }, [images.length]);
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -222,7 +226,7 @@ function FacilityCarousel({ images, facilityId }) {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [lightboxOpen]);
+  }, [closeLightbox, lbNext, lbPrev, lightboxOpen]);
 
   const slideWidthPct = 100 / visibleCount;
 
