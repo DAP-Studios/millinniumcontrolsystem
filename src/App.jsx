@@ -6,24 +6,33 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Infrastructure from './pages/Infrastructure';
+import Admin from './pages/Admin';
+import { DataProvider } from './context/DataContext';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <DataProvider>
+      <Router>
+        <ScrollToTop />
+        <div className="app-container">
+          <Header />
+          <main>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/infrastructure" element={<Infrastructure />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<Admin />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </DataProvider>
   );
 }
 
