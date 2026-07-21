@@ -248,21 +248,42 @@ export default function Home() {
       <ContactDock />
 
       <section className="home-hero">
-        <div className="home-hero__grid" aria-hidden="true" />
-        <div className="home-hero__glow" aria-hidden="true" />
+        <div className="home-hero__bg" style={{ backgroundImage: `url('/images/factory_hero_bg.png')` }} />
+        <div className="home-hero__overlay" aria-hidden="true" />
+        
+        {/* Futuristic Blueprint Connections Overlay */}
+        <div className="home-hero__tech-canvas" aria-hidden="true">
+          <svg className="home-hero__tech-svg" viewBox="0 0 700 500" fill="none">
+            <path d="M 120 180 L 260 80 L 460 160" stroke="rgba(56, 189, 248, 0.45)" strokeWidth="1.5" strokeDasharray="5 5" />
+            <path d="M 260 80 L 220 310 L 480 280" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="1.2" />
+            <circle cx="260" cy="80" r="3" fill="#38bdf8" />
+            <circle cx="120" cy="180" r="3" fill="#38bdf8" />
+            <circle cx="220" cy="310" r="3" fill="#38bdf8" />
+            <circle cx="460" cy="160" r="3" fill="#38bdf8" />
+          </svg>
+          <div className="tech-node tech-node--1" title="Control Systems">
+            <CircuitBoard size={16} />
+          </div>
+          <div className="tech-node tech-node--2" title="Robotics">
+            <Bot size={16} />
+          </div>
+          <div className="tech-node tech-node--3" title="Factory Automation">
+            <Factory size={16} />
+          </div>
+        </div>
+
         <div className="site-shell home-hero__layout">
           <div className="home-hero__copy">
             <div className="home-hero__eyebrow">
               <span className="home-hero__live-dot" />
-              Factory Automation
+              Millennium Control System
             </div>
-            <h1>
-              Automating
-              <span>the World</span>
+            <h1 className="home-hero__main-heading">
+              FACTORY AUTOMATION
             </h1>
-            <p>
-              Millennium Control System delivers robust engineering solutions. Sourcing premium components
-              to empower manufacturing industries with high productivity and smart data.
+            <p className="home-hero__lead">
+              Empowering industrial enterprises with advanced Mitsubishi Electric control systems, robotics, 
+              drives, and end-to-end integration support.
             </p>
             <div className="home-hero__actions">
               <Link to="/about" className="button button--primary">
@@ -272,39 +293,68 @@ export default function Home() {
                 Explore products <ArrowUpRight size={17} />
               </Link>
             </div>
-            <div className="home-hero__proof">
-              <ShieldCheck size={18} />
-              <span><strong>Established 2010</strong> · Product selection to commissioning support</span>
+
+            {/* Reference image ticker tag at bottom left */}
+            <div className="home-hero__ticker-badge">
+              <span className="ticker-badge__icon">▶</span>
+              <span className="ticker-badge__text">
+                <strong>"Automating the World"</strong> – A global approach in Vapi & Pan-India.
+              </span>
             </div>
           </div>
 
-          <div className="home-hero__visual" aria-label="Industrial automation system overview">
-            <div className="home-hero__visual-frame">
-              <img src="/images/hero_bg.png" alt="Automated industrial production environment" />
-              <div className="home-hero__visual-shade" />
-              <div className="home-hero__scan-line" aria-hidden="true" />
-              <div className="home-hero__visual-topline">
-                <span>CONTROL / MOTION / DATA</span>
-                <span className="home-hero__status"><i /> System ready</span>
-              </div>
-              <div className="home-hero__visual-card">
-                <div className="home-hero__visual-icon"><Factory size={22} /></div>
-                <div>
-                  <span>Integrated automation</span>
-                  <strong>One connected control stack</strong>
-                </div>
-                <Network size={22} />
-              </div>
-              <div className="home-hero__axis home-hero__axis--x">X / 184.40</div>
-              <div className="home-hero__axis home-hero__axis--y">Y / 092.18</div>
+          <div className="home-hero__right-container">
+            {/* Vivid Red Highlight Card from Reference Image */}
+            <div className="home-hero__red-card">
+              <h2>Automating <br />the World</h2>
             </div>
-            <div className="home-hero__float-card home-hero__float-card--top">
-              <span>Response</span>
-              <strong>Engineering-led</strong>
-            </div>
-            <div className="home-hero__float-card home-hero__float-card--bottom">
-              <Zap size={16} />
-              <div><span>Supply network</span><strong>Pan-India</strong></div>
+
+            <div className="home-hero__showcase">
+              <div className="home-hero__showcase-grid">
+                <Link to="/products?category=melsec-fx5u-series" className="showcase-card">
+                  <div className="showcase-card__header">
+                    <span className="showcase-card__tag">PLC / CONTROL</span>
+                    <span className="showcase-card__num">01</span>
+                  </div>
+                  <h3>Logic & Control</h3>
+                  <div className="showcase-card__media">
+                    <img src="/images/products/melsec-fx5u-series_fx5u-image-png.png" alt="PLC" />
+                  </div>
+                </Link>
+
+                <Link to="/products?category=inverters-vfd-ac-drive" className="showcase-card">
+                  <div className="showcase-card__header">
+                    <span className="showcase-card__tag">VFD / INVERTER</span>
+                    <span className="showcase-card__num">02</span>
+                  </div>
+                  <h3>Variable Speed</h3>
+                  <div className="showcase-card__media">
+                    <img src="/images/products/inverters-vfd-ac-drive_a800_a840-png.png" alt="VFD" />
+                  </div>
+                </Link>
+
+                <Link to="/products?category=human-machine-interfaces-melhmi-got" className="showcase-card">
+                  <div className="showcase-card__header">
+                    <span className="showcase-card__tag">HMI / INTERFACE</span>
+                    <span className="showcase-card__num">03</span>
+                  </div>
+                  <h3>Operator Display</h3>
+                  <div className="showcase-card__media">
+                    <img src="/images/products/human-machine-interfaces-melhmi-got_got-hmi_feature-png.png" alt="HMI" />
+                  </div>
+                </Link>
+
+                <Link to="/products?category=industrial-robots" className="showcase-card">
+                  <div className="showcase-card__header">
+                    <span className="showcase-card__tag">ROBOTICS / ARMS</span>
+                    <span className="showcase-card__num">04</span>
+                  </div>
+                  <h3>Flexible Robots</h3>
+                  <div className="showcase-card__media">
+                    <img src="/images/products/industrial-robots_products_media_image1.png" alt="Robot" />
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
