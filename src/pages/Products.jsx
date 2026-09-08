@@ -134,7 +134,8 @@ export default function Products() {
       <div className="c-mainVisual" style={{
         background: 'linear-gradient(135deg, #0d1e3d, #1a2f56)',
         color: '#fff',
-        padding: '65px 24px',
+        padding: '100px 24px 65px',
+        marginTop: '-64px',
         position: 'relative',
         overflow: 'hidden',
         textAlign: 'center',

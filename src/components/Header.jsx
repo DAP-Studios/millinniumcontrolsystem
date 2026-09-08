@@ -1,12 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+
+// Pages that open with a full-width hero/banner — the header floats
+// transparently over these until the visitor scrolls, then turns solid.
+const HERO_ROUTES = ['/', '/about', '/infrastructure', '/contact', '/products'];
 
 export default function Header() {
   const location = useLocation();
   const { categories } = useData();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const isHeroRoute = HERO_ROUTES.includes(location.pathname);
+  const isSolid = !isHeroRoute || scrolled || mobileMenuOpen;
+
+  useEffect(() => {
+    if (!isHeroRoute) return undefined;
+    setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isHeroRoute, location.pathname]);
 
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
@@ -21,7 +37,7 @@ export default function Header() {
   };
 
   return (
-    <header>
+    <header className={isHeroRoute ? `header-fixed-hero ${isSolid ? 'is-solid' : ''}` : ''}>
       <div className="header-inner">
         <Link className="logo-area" to="/" onClick={handleLinkClick}>
           <img src="/MCS - LOGO.png" alt="Millennium Control System Logo" className="logo-img" />

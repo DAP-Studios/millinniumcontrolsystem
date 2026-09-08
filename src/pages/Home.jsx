@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useSEO from '../hooks/useSEO';
-import heroBg from '../assets/hero_bg.png';
 
 const SPOTLIGHT_SLIDES = [
   {
@@ -58,25 +57,25 @@ export default function Home() {
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": "Millennium Control System Pvt. Ltd.",
-    "image": "/images/logo.png",
-    "telephone": "+91-20-12345678",
-    "email": "info@millenniumcontrolsystem.com",
+    "name": "Millennium Control System",
+    "image": "/MCS - LOGO.png",
+    "telephone": "+91-79-42656614",
+    "email": "info2.millenniumcontrol@gmail.com",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Industrial Area",
-      "addressLocality": "Pune",
-      "addressRegion": "Maharashtra",
-      "postalCode": "411026",
+      "streetAddress": "Gala No. 51, Royal Industrial Hub, Opp. Jai Research Foundation, N.H. No. 08, Valvada",
+      "addressLocality": "Vapi, Valsad",
+      "addressRegion": "Gujarat",
+      "postalCode": "396105",
       "addressCountry": "IN"
     },
     "url": window.location.origin
   };
 
   useSEO({
-    title: 'Factory Automation Solutions Pune | Mitsubishi Systems Integration',
-    description: 'Millennium Control System Pvt. Ltd. delivers state-of-the-art industrial automation, offering high-performance PLCs, VFD inverters, servo drives, human-machine interfaces, and smart factory integrations.',
-    keywords: 'Factory Automation Pune, Mitsubishi Electric PLC, VFD Inverters India, AC Servo Motors, e-F@ctory, GOC 43, HMI GOT, industrial robots',
+    title: 'Factory Automation Solutions Vapi, Gujarat | Mitsubishi Electric Channel Partner',
+    description: 'Millennium Control System delivers state-of-the-art industrial automation from Vapi, Gujarat, offering high-performance PLCs, VFD inverters, servo drives, human-machine interfaces, and smart factory integrations as an authorized Mitsubishi Electric channel partner.',
+    keywords: 'Factory Automation Vapi, Mitsubishi Electric PLC, VFD Inverters India, AC Servo Motors, e-F@ctory, GOC 43, HMI GOT, industrial robots',
     schema: orgSchema
   });
 
@@ -152,37 +151,9 @@ export default function Home() {
 
       {/* Hero Section */}
       <div className="hero">
-        <div className="hero-bg-img" style={{ backgroundImage: `linear-gradient(rgba(17, 27, 45, 0.65), rgba(28, 45, 74, 0.8)), url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+        <div className="hero-bg-img"></div>
         <div className="hero-pattern"></div>
         <div className="hero-overlay-lines"></div>
-
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }} viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid slice">
-          <g stroke="rgba(100,180,255,.25)" strokeWidth="1" fill="none">
-            <line x1="300" y1="100" x2="500" y2="200"/>
-            <line x1="500" y1="200" x2="600" y2="150"/>
-            <line x1="400" y1="300" x2="550" y2="350"/>
-            <line x1="200" y1="250" x2="350" y2="200"/>
-            <line x1="450" y1="400" x2="600" y2="380"/>
-            <line x1="300" y1="180" x2="280" y2="350"/>
-          </g>
-          <g fill="none" stroke="rgba(150,210,255,.5)" strokeWidth="1.5">
-            <g transform="translate(320,240)">
-              <rect x="-18" y="-8" width="36" height="16" rx="8"/>
-              <rect x="-8" y="-18" width="16" height="10" rx="2"/>
-              <circle cx="0" cy="0" r="22" strokeWidth="1" stroke="rgba(150,210,255,.3)"/>
-            </g>
-            <g transform="translate(460,160)">
-              <path d="M-15 0 L15 0 M-15 0 L-5 -8 L5 -8 L5 8 L-5 8 Z M5 -4 L15 0 L5 4"/>
-              <circle cx="0" cy="0" r="22" strokeWidth="1" stroke="rgba(150,210,255,.3)"/>
-            </g>
-            <g transform="translate(340,380)">
-              <rect x="-12" y="-10" width="24" height="18" rx="3"/>
-              <circle cx="-6" cy="10" r="3"/>
-              <circle cx="6" cy="10" r="3"/>
-              <circle cx="0" cy="0" r="22" strokeWidth="1" stroke="rgba(150,210,255,.3)"/>
-            </g>
-          </g>
-        </svg>
 
         <div className="hero-content">
           <div className="hero-left">
@@ -198,7 +169,7 @@ export default function Home() {
         </div>
         <div className="hero-tagline-wrap">
           <Link to="/about" className="hero-tagline-link">
-            "Automating the World" – A global approach in Pune & India.
+            "Solution You Deserve" – Authorized Mitsubishi Electric partner in Vapi, Gujarat.
           </Link>
         </div>
       </div>

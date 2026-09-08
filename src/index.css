@@ -65,6 +65,31 @@ header{
   position:sticky;top:0;z-index:200;
   box-shadow:0 1px 4px rgba(0,0,0,.08);
 }
+
+/* On hero pages the header blends into the hero (transparent) until the
+   visitor scrolls (or opens the mobile menu), then becomes a solid bar.
+   Position/layout stay exactly as the default sticky header above —
+   only background and text colour change — so the header keeps
+   occupying its normal 64px slot and every click target lands exactly
+   where it always did. The hero sections themselves are pulled up by
+   that same 64px (see their own rules) so they still appear to run
+   full-bleed behind the transparent header. */
+header.header-fixed-hero{
+  transition:background-color .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+header.header-fixed-hero:not(.is-solid){
+  background:transparent;border-bottom-color:transparent;box-shadow:none;
+}
+header.header-fixed-hero.is-solid{
+  background:#fff;border-bottom-color:var(--border);box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+header.header-fixed-hero:not(.is-solid) .nav-link{color:#fff;}
+header.header-fixed-hero:not(.is-solid) .nav-link:hover,
+header.header-fixed-hero:not(.is-solid) .nav-link.active{color:#fff;text-decoration:underline;text-underline-offset:6px;}
+header.header-fixed-hero:not(.is-solid) .logo-name,
+header.header-fixed-hero:not(.is-solid) .logo-sub{color:#fff;}
+header.header-fixed-hero:not(.is-solid) .hamburger-btn{color:#fff;}
+header.header-fixed-hero:not(.is-solid) .dropdown{color:var(--text);}
 .header-inner{
   max-width:100%;padding:0 24px;
   display:flex;align-items:center;height:64px;gap:0;
@@ -276,7 +301,8 @@ nav {
   width: 100%;
   height: 520px;
   overflow: hidden;
-  background: #1a2a4a;
+  background: #2b2d33;
+  margin-top: -64px; /* pulls the hero up under the transparent sticky header */
 }
 
 .hero-bg {
@@ -286,11 +312,7 @@ nav {
 }
 .hero-bg-img{
   position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(13,24,41,.5), rgba(13,24,41,.85)),
-    url('/images/hero_bg.png');
-  background-size:cover;
-  background-position:center;
+  background-image: linear-gradient(135deg, #34363c 0%, #26282e 55%, #1b1c20 100%);
 }
 
 .hero-pattern {
@@ -305,7 +327,7 @@ nav {
 .hero-overlay-lines {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .1) 50%, rgba(0, 0, 0, .05) 100%);
+  background: linear-gradient(to right, rgba(45, 45, 50, .45) 0%, rgba(45, 45, 50, .12) 50%, rgba(45, 45, 50, .05) 100%);
 }
 
 .hero-content {
@@ -2279,9 +2301,23 @@ footer {
 .about-hero {
   position: relative;
   background: linear-gradient(135deg, var(--navy) 0%, #2a3a5c 50%, #1a1f2e 100%);
-  padding: 90px 24px 80px;
+  padding: 120px 24px 80px;
   text-align: center;
   overflow: hidden;
+  margin-top: -64px; /* pulls the hero up under the transparent sticky header */
+}
+.about-hero-logo-wrap {
+  display: inline-block;
+  background: #fff;
+  border-radius: 16px;
+  padding: 10px 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
+}
+.about-hero-logo {
+  height: 56px;
+  width: auto;
+  display: block;
 }
 .about-hero-bg {
   position: absolute; inset: 0;
@@ -2639,7 +2675,7 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .about-hero { padding: 60px 20px 56px; }
+  .about-hero { padding: 96px 20px 56px; }
   .about-intro-section { padding: 48px 0; }
   .about-factsheet-section { padding: 48px 0; }
   .about-products-section { padding: 48px 0; }
@@ -2716,6 +2752,7 @@ footer {
   display: flex; align-items: center;
   overflow: hidden;
   background: var(--infra-dark);
+  margin-top: -64px; /* pulls the hero up under the transparent sticky header */
 }
 .infra-hero-bg {
   position: absolute; inset: 0;

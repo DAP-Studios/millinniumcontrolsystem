@@ -112,11 +112,14 @@ export default function About() {
       <section className="about-hero">
         <div className="about-hero-bg" />
         <div className="about-hero-content">
+          <div className="about-hero-logo-wrap">
+            <img src="/MCS - LOGO.png" alt="Millennium Control System Logo" className="about-hero-logo" />
+          </div>
           <span className="about-badge">Est. 2010 · Vapi, Gujarat</span>
           <h1 className="about-hero-title">Millennium Control System</h1>
           <p className="about-hero-sub">
-            Authorized manufacturer, wholesaler &amp; trader of Mitsubishi industrial
-            automation &amp; control equipment
+            Authorized Silver Channel Partner of Mitsubishi Electric's Factory Automation
+            &amp; Industrial Division — "Solution You Deserve"
           </p>
           <div className="about-hero-tags">
             <span className="hero-tag"><CheckCircle size={14} strokeWidth={2.5} /> TrustSEAL Verified</span>
@@ -149,10 +152,9 @@ export default function About() {
             <div className="about-intro-img-col">
               <div className="about-logo-card">
                 <img
-                  src="https://5.imimg.com/data5/SELLER/Logo/2021/12/LG/YN/IQ/5308242/mcs-120x120.jpeg"
+                  src="/MCS - LOGO.png"
                   alt="Millennium Control System Logo"
                   className="about-logo-img"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }}
                 />
                 <div className="about-company-name-plate">
                   <strong>Millennium Control System</strong>
@@ -185,28 +187,31 @@ export default function About() {
               <p className="section-eyebrow">Introduction &amp; Profile</p>
               <h2 className="about-intro-heading">Who We Are</h2>
               <p className="about-intro-body">
-                Established in the year <strong>2010 at Vapi, Gujarat</strong>, we{" "}
-                <strong>"Millennium Control System"</strong> are a Sole Proprietorship based firm,
-                engaged as the foremost <strong>manufacturer, wholesaler and trader</strong> of
-                Temperature Controllers, Mitsubishi VFD (Variable Frequency Drives), Control
-                Panels, PLC Systems and Pressure Sensors.
+                <strong>Millennium Control System</strong> is an industrial automation company
+                based in <strong>Vapi, Gujarat</strong>, specializing in PLCs, HMIs, VFDs, servo
+                systems, industrial robots, control panels, and automation solutions. Established
+                in <strong>2010</strong>, we are a Sole Proprietorship firm engaged as a leading{" "}
+                <strong>manufacturer, wholesaler and trader</strong> of Temperature Controllers,
+                Control Panels, PLC Systems and Pressure Sensors.
+              </p>
+              <p className="about-intro-body">
+                We are an <strong>Authorized Silver Channel Partner of Mitsubishi Electric's
+                Factory Automation &amp; Industrial Division</strong>, committed to providing
+                genuine products, reliable support, and efficient automation solutions for
+                various industries — bringing world-class Japanese technology to industries
+                across Gujarat and India.
               </p>
               <p className="about-intro-body">
                 Our products are high in demand due to their{" "}
-                <strong>premium quality and affordable prices</strong>. We ensure timely delivery to
-                all our clients, through which we have gained a huge clientele across local and
-                national markets.
-              </p>
-              <p className="about-intro-body">
-                As an authorized trader of <strong>Mitsubishi Electric</strong> — one of Japan's
-                leading industrial automation brands — we bring world-class technology to
-                industries across Gujarat and across India.
+                <strong>premium quality and affordable prices</strong>. We ensure timely delivery
+                to all our clients, through which we have gained a huge clientele across local
+                and national markets. <em>"Solution You Deserve."</em>
               </p>
 
               <div className="about-highlights">
                 <div className="highlight-chip">
                   <span className="highlight-dot" />
-                  Mitsubishi Authorized Trader
+                  Mitsubishi Silver Channel Partner
                 </div>
                 <div className="highlight-chip">
                   <span className="highlight-dot" />
@@ -313,6 +318,27 @@ export default function About() {
         </div>
       </section>
 
+      {/* ── AUTHORIZATION CERTIFICATE ── */}
+      <section className="about-certificate-section" style={{ padding: '60px 24px', background: '#f8fafc' }}>
+        <div className="about-container">
+          <div className="section-header-centered">
+            <p className="section-eyebrow">Authorization</p>
+            <h2 className="section-title">Mitsubishi Electric Certified</h2>
+            <div className="section-divider" />
+          </div>
+          <div style={{ maxWidth: '820px', margin: '0 auto', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+            <img
+              src="/images/mitsubishi-authorization-certificate.jpg"
+              alt="Mitsubishi Electric Authorisation Certificate — Millennium Control System, Vapi is an authorised Silver Channel Partner of the Factory Automation and Industrial Division"
+              style={{ width: '100%', borderRadius: '4px', display: 'block' }}
+            />
+            <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--muted)', marginTop: '16px' }}>
+              Certified <strong>Silver Channel Partner</strong> of Mitsubishi Electric's Factory Automation &amp; Industrial Division · Valid 1 Apr 2025 – 31 Mar 2026
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── WHY CHOOSE US ── */}
       <section className="about-why-section">
         <div className="about-container">
@@ -341,18 +367,17 @@ export default function About() {
               <div className="mv-icon-wrap"><Target size={32} strokeWidth={1.8} /></div>
               <h3 className="mv-title">Our Mission</h3>
               <p className="mv-body">
-                To provide reliable, high-quality Mitsubishi industrial automation and control
-                equipment at competitive prices — ensuring timely delivery and complete customer
-                satisfaction across every project, small or large.
+                To deliver reliable automation products and quality services with customer
+                satisfaction and continuous technological support.
               </p>
             </div>
             <div className="about-mv-card mv-vision">
               <div className="mv-icon-wrap"><Rocket size={32} strokeWidth={1.8} /></div>
               <h3 className="mv-title">Our Vision</h3>
               <p className="mv-body">
-                To become the most trusted name in industrial automation in Gujarat and across
-                India, setting new benchmarks in product quality, after-sales support, and
-                long-term customer relationships built on integrity.
+                To become a leading and trusted industrial automation solution provider by
+                delivering innovative, reliable, and high-quality technologies — including
+                robotics and smart automation systems — for modern industries.
               </p>
             </div>
           </div>
