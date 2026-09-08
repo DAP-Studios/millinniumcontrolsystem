@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-<<<<<<< HEAD
-import mcsLogo from "../assets/logo.png";
-=======
 import { useData } from '../context/DataContext';
->>>>>>> 62f6dfa92f9f3ccf87b34b788d1351a315fb0636
 
 export default function Header() {
   const location = useLocation();
@@ -27,20 +23,12 @@ export default function Header() {
   return (
     <header>
       <div className="header-inner">
-<<<<<<< HEAD
-        <Link className="logo-area" to="/">
-          <img src={mcsLogo} alt="MCS LOGO"
-            className='mcsLogo'
-            style={{ width: '70px', height: '70px' }}
-          />
-=======
         <Link className="logo-area" to="/" onClick={handleLinkClick}>
           <img src="/MCS - LOGO.png" alt="Millennium Control System Logo" className="logo-img" />
           <div className="logo-text-wrap">
             <span className="logo-name">Millennium</span>
             <span className="logo-sub">Control System</span>
           </div>
->>>>>>> 62f6dfa92f9f3ccf87b34b788d1351a315fb0636
         </Link>
 
         {/* Hamburger Icon */}
@@ -62,17 +50,6 @@ export default function Header() {
         <nav className={mobileMenuOpen ? 'nav-open' : ''}>
           <ul className="nav-list">
             <li className="nav-item">
-<<<<<<< HEAD
-              <Link to="/products" className={`nav-link ${isActive('/products')}`}>Products <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" /></svg></Link>
-              <ul className="dropdown">
-                <li><Link to="/products/goc">Graphic Operation Controller (GOC)</Link></li>
-                <li><Link to="/products/melhmi-got">Human Machine Interfaces (GOT)</Link></li>
-                <li><Link to="/products/industrial-robots">Industrial Robots (MELFA)</Link></li>
-                <li><Link to="/products/inverters-vfd">Inverters / AC Drives</Link></li>
-                <li><Link to="/products/melservo-servo">MELSERVO (AC Servos)</Link></li>
-                <li><Link to="/products/low-voltage-breakers">Circuit Breakers</Link></li>
-                <li><Link to="/products">All 11 FA Categories</Link></li>
-=======
               <Link to="/" className={`nav-link ${isActive('/')}`} onClick={handleLinkClick}>Home</Link>
             </li>
             <li className="nav-item dropdown-parent">
@@ -115,7 +92,6 @@ export default function Header() {
                     All Products
                   </Link>
                 </li>
->>>>>>> 62f6dfa92f9f3ccf87b34b788d1351a315fb0636
               </ul>
             </li>
             <li className="nav-item">
@@ -131,14 +107,6 @@ export default function Header() {
         </nav>
 
         <div className="header-right">
-<<<<<<< HEAD
-          {/* <Link to="/about" className="about-link">About us</Link>
-          <span style={{ color: '#ccc' }}>|</span> */}
-          <Link to="/contact" className="inquiries-link">Inquiries</Link>
-          {/* <a href="#" className="globe-btn" aria-label="Language">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
-        </a>*/}
-=======
           <a
             href="/brochures/goc_goc35_catalogue-pdf.pdf"
             download="Millennium-Control-System-Catalogue.pdf"
@@ -146,7 +114,6 @@ export default function Header() {
           >
             Download
           </a>
->>>>>>> 62f6dfa92f9f3ccf87b34b788d1351a315fb0636
         </div>
       </div>
     </header >

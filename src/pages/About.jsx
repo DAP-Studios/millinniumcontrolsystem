@@ -1,49 +1,3 @@
-<<<<<<< HEAD
-import { useEffect } from 'react';
-
-export default function About() {
-  useEffect(() => {
-    document.title = "About Us | Millennium Control System Vapi";
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute("content", "Learn about Millennium Control System, established in 2012 in Vapi, Gujarat. Leading system integrator and proprietor-led trader of industrial automation products.");
-    }
-  }, []);
-
-  return (
-    <div>
-      <div className="page-header" style={{ background: 'linear-gradient(135deg, #111b2d 0%, #1c2d4a 100%)', padding: '70px 40px' }}>
-        <h1>About Us</h1>
-        <p style={{ color: '#90a0c0', fontSize: '15px' }}>Learn more about Millennium Control System</p>
-      </div>
-      
-      <div className="page-content" style={{ padding: '60px 40px', maxWidth: '1000px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'left', display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '50px', alignItems: 'start' }}>
-          
-          <div>
-            <h2 style={{ fontSize: '28px', color: 'var(--navy)', marginBottom: '20px', fontWeight: '800' }}>
-              Pioneering Factory Automation Solutions
-            </h2>
-            <p style={{ fontSize: '15px', lineHeight: '1.8', color: '#475569', marginBottom: '20px' }}>
-              Established in 2012, <strong>Millennium Control System</strong> is a premier manufacturer, wholesaler, and trader of high-end industrial automation and mechatronics solutions. Under the visionary leadership of our proprietor, <strong>Mr. Hemang Makwana</strong>, we have earned a stellar reputation for delivering superior quality equipment and engineering services.
-            </p>
-            <p style={{ fontSize: '15px', lineHeight: '1.8', color: '#475569', marginBottom: '24px' }}>
-              We specialize in the distribution and integration of world-class Mitsubishi Electric products, including AC Drives (VFDs), Programmable Logic Controllers (PLCs), Human Machine Interfaces (HMIs), AC Servo Motors, Motion Units, and specialized design software. Our mission is to empower factories to adopt smart manufacturing processes, optimizing their production efficiency through smart connectivity, IoT integrations, and data-driven automation systems.
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '30px' }}>
-              <div style={{ padding: '24px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                <h3 style={{ color: '#e60012', marginBottom: '10px', fontSize: '16px', fontWeight: '700' }}>Our Mission</h3>
-                <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: 0 }}>
-                  To supply top-tier, reliable, and energy-efficient automation components that secure operations and boost manufacturing yields.
-                </p>
-              </div>
-              <div style={{ padding: '24px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                <h3 style={{ color: '#e60012', marginBottom: '10px', fontSize: '16px', fontWeight: '700' }}>Our Vision</h3>
-                <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: 0 }}>
-                  To drive industrial digital transformations by offering state-of-the-art system integration and specialized engineering support.
-                </p>
-=======
 import { useState } from "react";
 import {
   Zap,
@@ -266,7 +220,6 @@ export default function About() {
                   <span className="highlight-dot" />
                   15+ Years in Industry
                 </div>
->>>>>>> 62f6dfa92f9f3ccf87b34b788d1351a315fb0636
               </div>
             </div>
           </div>
