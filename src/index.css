@@ -820,78 +820,142 @@ nav {
   gap: 12px
 }
 
-/* Industries / Competencies image panels */
-.industry-panels {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0
-}
-
-.industry-panel {
+/* ── INDUSTRIES WE SERVE CAROUSEL ── */
+.industries-carousel {
   position: relative;
-  height: 240px;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.industry-panel-bg {
-  position: absolute;
-  inset: 0;
+  padding: 64px 0;
+  color: #fff;
+  background:
+    linear-gradient(rgba(15,23,42,.82),rgba(15,23,42,.88)),
+    url('/images/industries_serve.png');
   background-size: cover;
   background-position: center;
-  transition: transform .4s;
 }
 
-.industry-panel:hover .industry-panel-bg {
-  transform: scale(1.04)
+.industries-carousel-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 70px;
+  position: relative;
 }
 
-.industry-panel-industries .industry-panel-bg {
-  background:
-    linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
-    url('/images/industries_serve.png');
-  background-size:cover;background-position:center;
+.industries-carousel .section-title {
+  color: #fff;
 }
 
-.industry-panel-competencies .industry-panel-bg {
-  background:
-    linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
-    url('/images/our_competencies.png');
-  background-size:cover;background-position:center;
-}
-
-.industry-panel-label {
-  position: absolute;
-  inset: 0;
+.industries-underline {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  gap: 10px;
+  margin: 10px 0 40px;
 }
 
-.industry-label-box {
-  background: rgba(30, 30, 30, .75);
-  color: #fff;
-  padding: 12px 22px;
+.industries-underline-line {
+  width: 46px;
+  height: 1px;
+  background: rgba(255,255,255,.45);
+}
+
+.industries-underline svg {
+  width: 14px;
+  height: 14px;
+  stroke: rgba(255,255,255,.75);
+}
+
+.industries-carousel-track {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  transition: opacity .25s;
+}
+
+.industry-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 170px;
+  text-align: center;
+}
+
+.industry-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.5);
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  transition: background .2s;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a2a5e, #0d1a40);
+  transition: transform .3s, border-color .3s, background .3s;
 }
 
-.industry-panel:hover .industry-label-box {
-  background: rgba(30, 30, 30, .9)
+.industry-slide:hover .industry-circle {
+  transform: scale(1.06);
+  border-color: var(--red);
+  background: linear-gradient(135deg, var(--red), #8a0000);
 }
 
-.industry-label-box::before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 9px solid var(--red);
+.industry-circle svg {
+  width: 52px;
+  height: 52px;
+  stroke: #fff;
+}
+
+.industry-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.industries-nav-btn {
+  position: absolute;
+  top: 92px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--red);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+  z-index: 3;
+}
+
+.industries-nav-btn:hover {
+  background: #c2000f;
+  transform: scale(1.08);
+}
+
+.industries-nav-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+.industries-nav-prev { left: 12px; }
+.industries-nav-next { right: 12px; }
+
+@media(max-width: 900px) {
+  .industries-carousel-inner { padding: 0 50px; }
+  .industry-circle { width: 110px; height: 110px; }
+  .industry-circle svg { width: 40px; height: 40px; }
+  .industries-nav-btn { top: 76px; }
+}
+
+@media(max-width: 600px) {
+  .industries-carousel-track { gap: 24px; }
+  .industry-slide { width: 45%; }
+  .industries-nav-prev { left: 4px; }
+  .industries-nav-next { right: 4px; }
 }
 
 /* ── PRODUCTS ── */
@@ -1586,9 +1650,6 @@ footer {
   }
   .spotlight-card svg {
     margin: 0 auto;
-  }
-  .industry-panels {
-    grid-template-columns: 1fr !important;
   }
 }
 

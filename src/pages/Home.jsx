@@ -48,10 +48,108 @@ const SPOTLIGHT_SLIDES = [
   }
 ];
 
+const INDUSTRIES_SERVED = [
+  {
+    id: 'textile',
+    name: 'Textile',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 4L4 7l2 3 2-1v9h8v-9l2 1 2-3-4-3-2 2h-4z" />
+      </svg>
+    )
+  },
+  {
+    id: 'printing',
+    name: 'Printing',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9V3h12v6" />
+        <rect x="4" y="9" width="16" height="8" rx="1" />
+        <path d="M6 17v4h12v-4" />
+      </svg>
+    )
+  },
+  {
+    id: 'packaging',
+    name: 'Packaging',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 7l9-4 9 4-9 4-9-4z" />
+        <path d="M3 7v10l9 4 9-4V7" />
+        <path d="M12 11v10" />
+      </svg>
+    )
+  },
+  {
+    id: 'pharma',
+    name: 'Pharma',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8.5 15.5l7-7a4.95 4.95 0 117 7l-7 7a4.95 4.95 0 01-7-7z" />
+        <line x1="11" y1="13" x2="14.5" y2="9.5" />
+      </svg>
+    )
+  },
+  {
+    id: 'chemical',
+    name: 'Chemical',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 3h6M10 3v5l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3" />
+      </svg>
+    )
+  },
+  {
+    id: 'plastic',
+    name: 'Plastic',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 2h4v3l2 2v13a2 2 0 01-2 2h-4a2 2 0 01-2-2V7l2-2V2z" />
+        <line x1="9" y1="12" x2="15" y2="12" />
+      </svg>
+    )
+  },
+  {
+    id: 'water-treatment',
+    name: 'Water Treatment',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2s7 8.5 7 13a7 7 0 11-14 0c0-4.5 7-13 7-13z" />
+      </svg>
+    )
+  },
+  {
+    id: 'process-machinery',
+    name: 'Process Machinery',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82A1.65 1.65 0 003 15.09H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+      </svg>
+    )
+  },
+  {
+    id: 'power-press-machinery',
+    name: 'Power Press Machinery',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="16" height="4" rx="1" />
+        <line x1="12" y1="7" x2="12" y2="14" />
+        <rect x="7" y="14" width="10" height="3" rx="1" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+    )
+  }
+];
+
+const INDUSTRIES_VISIBLE = 4;
+
 export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [industryIndex, setIndustryIndex] = useState(0);
+  const [isIndustriesPaused, setIsIndustriesPaused] = useState(false);
 
   // Home Page Schema.org Organization structured data
   const orgSchema = {
@@ -59,8 +157,8 @@ export default function Home() {
     "@type": "LocalBusiness",
     "name": "Millennium Control System",
     "image": "/MCS - LOGO.png",
-    "telephone": "+91-79-42656614",
-    "email": "info2.millenniumcontrol@gmail.com",
+    "telephone": "+91-6356732897",
+    "email": "marketing.millenniumcontrol@gmail.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Gala No. 51, Royal Industrial Hub, Opp. Jai Research Foundation, N.H. No. 08, Valvada",
@@ -97,6 +195,28 @@ export default function Home() {
     setActiveSlide((prev) => (prev - 1 + SPOTLIGHT_SLIDES.length) % SPOTLIGHT_SLIDES.length);
   };
 
+  useEffect(() => {
+    if (isIndustriesPaused) return;
+
+    const timer = setInterval(() => {
+      setIndustryIndex((prev) => (prev + 1) % INDUSTRIES_SERVED.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [isIndustriesPaused]);
+
+  const handleIndustryNext = () => {
+    setIndustryIndex((prev) => (prev + 1) % INDUSTRIES_SERVED.length);
+  };
+
+  const handleIndustryPrev = () => {
+    setIndustryIndex((prev) => (prev - 1 + INDUSTRIES_SERVED.length) % INDUSTRIES_SERVED.length);
+  };
+
+  const visibleIndustries = Array.from({ length: INDUSTRIES_VISIBLE }, (_, i) =>
+    INDUSTRIES_SERVED[(industryIndex + i) % INDUSTRIES_SERVED.length]
+  );
+
   return (
     <>
       {/* Floating Contact Widget */}
@@ -118,7 +238,7 @@ export default function Home() {
 
           {/* Mail Icon Link */}
           <a
-            href="mailto:info2.millenniumcontrol@gmail.com"
+            href="mailto:marketing.millenniumcontrol@gmail.com"
             className="popup-item-btn mail-btn"
             title="Send Email"
             aria-label="Email"
@@ -267,20 +387,51 @@ export default function Home() {
               <Link to="/about" className="show-all-link">Learn More</Link>
             </div>
           </div>
-          <div className="industry-panels" style={{ marginTop: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div className="industry-panel industry-panel-industries" style={{ minHeight: '180px', borderRadius: '4px', overflow: 'hidden' }}>
-              <div className="industry-panel-bg"></div>
-              <div className="industry-panel-label">
-                <div className="industry-label-box" style={{ textTransform: 'uppercase', fontWeight: '700' }}>Industries We Serve</div>
-              </div>
-            </div>
-            <div className="industry-panel industry-panel-competencies" style={{ minHeight: '180px', borderRadius: '4px', overflow: 'hidden' }}>
-              <div className="industry-panel-bg"></div>
-              <div className="industry-panel-label">
-                <div className="industry-label-box" style={{ textTransform: 'uppercase', fontWeight: '700' }}>Our Competencies</div>
-              </div>
+        </div>
+      </section>
+
+      {/* Industries We Serve Carousel */}
+      <section
+        className="industries-carousel"
+        onMouseEnter={() => setIsIndustriesPaused(true)}
+        onMouseLeave={() => setIsIndustriesPaused(false)}
+      >
+        <div className="industries-carousel-inner">
+          <div className="section-head">
+            <div className="section-title">Industries We Serve</div>
+            <div className="industries-underline">
+              <span className="industries-underline-line"></span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+              <span className="industries-underline-line"></span>
             </div>
           </div>
+
+          <button
+            className="industries-nav-btn industries-nav-prev"
+            onClick={handleIndustryPrev}
+            aria-label="Previous industries"
+          >
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+          </button>
+
+          <div className="industries-carousel-track">
+            {visibleIndustries.map((industry) => (
+              <div className="industry-slide" key={industry.id}>
+                <div className="industry-circle">{industry.icon}</div>
+                <div className="industry-name">{industry.name}</div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            className="industries-nav-btn industries-nav-next"
+            onClick={handleIndustryNext}
+            aria-label="Next industries"
+          >
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
+          </button>
         </div>
       </section>
 
@@ -384,11 +535,15 @@ export default function Home() {
           <div className="social-channels" style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
             <div className="social-channel-col">
               <span style={{ fontWeight: '700', display: 'block', marginBottom: '8px' }}>YouTube Channel</span>
-              <a href="#" className="social-btn" style={{ fontSize: '13px', color: '#dc2626', fontWeight: '600' }}>MILLENNIUM CONTROL SYSTEM INDIA</a>
+              <a href="https://youtube.com/channel/UCD742GE8smj5IfMKC59tBGQ" target="_blank" rel="noopener noreferrer" className="social-btn" style={{ fontSize: '13px', color: '#dc2626', fontWeight: '600' }}>MILLENNIUM CONTROL SYSTEM INDIA</a>
             </div>
             <div className="social-channel-col">
-              <span style={{ fontWeight: '700', display: 'block', marginBottom: '8px' }}>LinkedIn Network</span>
-              <a href="#" className="social-btn" style={{ fontSize: '13px', color: '#2563eb', fontWeight: '600' }}>Millennium Control System-FA-INDIA</a>
+              <span style={{ fontWeight: '700', display: 'block', marginBottom: '8px' }}>Facebook Page</span>
+              <a href="https://www.facebook.com/profile.php?id=100064039602158" target="_blank" rel="noopener noreferrer" className="social-btn" style={{ fontSize: '13px', color: '#2563eb', fontWeight: '600' }}>Millennium Control System</a>
+            </div>
+            <div className="social-channel-col">
+              <span style={{ fontWeight: '700', display: 'block', marginBottom: '8px' }}>Instagram</span>
+              <a href="https://www.instagram.com/millenniumcontrolsystem?r=nametag" target="_blank" rel="noopener noreferrer" className="social-btn" style={{ fontSize: '13px', color: '#c2185b', fontWeight: '600' }}>@millenniumcontrolsystem</a>
             </div>
           </div>
         </div>

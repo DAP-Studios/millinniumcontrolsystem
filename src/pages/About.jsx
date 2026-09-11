@@ -174,8 +174,8 @@ export default function About() {
                   </div>
                 </div>
                 <div className="about-contact-quick">
-                  <a href="tel:07942656614" className="quick-call-btn">
-                    <Phone size={15} strokeWidth={2} /> 079-42656614
+                  <a href="tel:+916356732897" className="quick-call-btn">
+                    <Phone size={15} strokeWidth={2} /> +91 63567 32897
                   </a>
                   <div className="response-rate-badge">75% Response Rate</div>
                 </div>
@@ -396,8 +396,8 @@ export default function About() {
             </div>
             <div className="about-contact-right">
               <a href="/contact" className="about-contact-btn">Contact Us</a>
-              <a href="tel:07942656614" className="about-contact-phone">
-                <Phone size={16} strokeWidth={2} /> 079-42656614
+              <a href="tel:+916356732897" className="about-contact-phone">
+                <Phone size={16} strokeWidth={2} /> +91 63567 32897
               </a>
             </div>
           </div>

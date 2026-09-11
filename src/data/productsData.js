@@ -6,19 +6,19 @@ export const initialCategories = [
     "id": "goc",
     "name": "Graphic Operation Controllers (GOC)",
     "description": "Compact Graphic Operation Controllers merging PLC control and HMI screen interface in a single unit.",
-    "image": "/images/products/goc_goc43_image_media_image1.png"
+    "image": "/images/products/goc_goc43.png"
   },
   {
     "id": "human-machine-interfaces-melhmi-got",
     "name": "HMIs & Display Terminals (GOT HMI)",
     "description": "Mitsubishi GOT HMI touchscreen operation terminals with high-definition display panels and remote control.",
-    "image": "/images/products/human-machine-interfaces-melhmi-got_got-hmi_hmi-png.png"
+    "image": "/images/products/hmi_got2000_category.png"
   },
   {
     "id": "industrial-robots",
     "name": "MELFA Industrial Robots",
     "description": "Mitsubishi vertical multi-joint and SCARA industrial robotic arms for pick-and-place, assembly, and sorting.",
-    "image": "/images/products/industrial-robots_robot-image-png.png"
+    "image": "/images/products/industrial-robots.png"
   },
   {
     "id": "inverters-vfd-ac-drive",
@@ -30,43 +30,43 @@ export const initialCategories = [
     "id": "low-voltage-circuit-breakers",
     "name": "Low-voltage Switchgears & Breakers",
     "description": "Molded Case Circuit Breakers (MCCB), Air Circuit Breakers (ACB), and magnetic contactors for electrical protection.",
-    "image": "/images/products/low-voltage-circuit-breakers_image-png.png"
+    "image": "/images/products/low-voltage-switchgear.png"
   },
   {
     "id": "melsec-fx3u-series",
     "name": "MELSEC FX3U Series PLC",
     "description": "High-speed classic modular PLC supporting up to 384 I/O points and independent simple positioning control.",
-    "image": "/images/products/melsec-fx3u-series_fx3u-series-png.png"
+    "image": "/images/products/melsec-fx3u_main.png"
   },
   {
     "id": "melsec-fx5u-series",
     "name": "MELSEC FX5U Series Next-Gen PLC",
     "description": "Next-generation Mitsubishi iQ-F series micro PLC with integrated analog capability, Ethernet interface, and high-speed positioning.",
-    "image": "/images/products/melsec-fx5u-series_fx5u-image-png.png"
+    "image": "/images/products/melsec-fx5u_main.png"
   },
   {
     "id": "melsec-q-series",
     "name": "MELSEC Q Series Modular PLC",
     "description": "High-performance modular programmable logic controllers (PLCs) supporting multi-CPU racks and advanced process control.",
-    "image": "/images/products/melsec-q-series_q-series-plc-png.png"
+    "image": "/images/products/melsec-q-series.png"
   },
   {
     "id": "melservo-ac-servo",
     "name": "MELSERVO AC Servo Motors & Drives",
     "description": "Precision AC Servo Motors and Servo Drives with high-resolution encoders and network communications.",
-    "image": "/images/products/melservo-ac-servo_melservo-j4_product-image-png.png"
+    "image": "/images/products/melservo_generic-motor.png"
   },
   {
     "id": "motion-unit",
     "name": "Multi-Axis Motion Controllers",
     "description": "Dedicated motion controllers and positioning modules for multi-axis synchronous speed, electronic cams, and path tracking.",
-    "image": "/images/products/motion-unit_qd77ms-photo.jpg"
+    "image": "/images/products/motion-unit_fx5-40ssc.png"
   },
   {
     "id": "software",
     "name": "MELSOFT Industrial Software",
     "description": "Engineering software suite (GX Works3, GT Works3, MT Developer2) for PLC, HMI, and motion design.",
-    "image": "/images/products/software_gxworks3-screenshot.jpg"
+    "image": "/images/products/software.png"
   },
   {
     "id": "modular-io-systems",
@@ -105,7 +105,7 @@ export const initialProducts = [
       "Mounting": "DIN rail or Panel mount",
       "Voltage": "24V DC operating input"
     },
-    "imageUrl": "/images/products/goc_goc35_image_media_image1.png",
+    "imageUrl": "/images/products/goc_goc35.png",
     "youtubeUrl": "https://www.youtube.com/embed/4OVCmdxR6y0",
     "catalogUrl": "/brochures/goc_goc35_catalogue-pdf.pdf"
   },
@@ -131,7 +131,7 @@ export const initialProducts = [
       "Memory": "512 KB Program Memory",
       "Languages": "Multi-language support (Hindi, Marathi, etc.)"
     },
-    "imageUrl": "/images/products/goc_goc43_image_media_image1.png",
+    "imageUrl": "/images/products/goc_goc43.png",
     "youtubeUrl": "https://www.youtube.com/embed/4OVCmdxR6y0",
     "catalogUrl": "/brochures/goc_goc43_goc-43-catalogue-pdf.pdf"
   },
@@ -155,7 +155,7 @@ export const initialProducts = [
       "Interfaces": "Ethernet, USB, RS-232, RS-422/485",
       "Data Logging": "SD Card storage for CSV alerts and alarms"
     },
-    "imageUrl": "/images/products/human-machine-interfaces-melhmi-got_got-hmi_feature-png.png",
+    "imageUrl": "/images/products/hmi_got2000_running.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/human-machine-interfaces-melhmi-got_catalogue.pdf"
   },
@@ -179,7 +179,7 @@ export const initialProducts = [
       "Controller": "SSCNET III/H / CC-Link IE TSN CR800 controller",
       "Protection": "IP67 dust/water resistant models available"
     },
-    "imageUrl": "/images/products/industrial-robots_products_media_image1.png",
+    "imageUrl": "/images/products/industrial-robots.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "#"
   },
@@ -251,7 +251,7 @@ export const initialProducts = [
       "Safety standard": "EN ISO 13849-1 Cat. 3 / PLd, IEC 60204-1",
       "Enclosure": "IP20 rating standard"
     },
-    "imageUrl": "/images/products/inverters-vfd-ac-drive_d800_image-png.png",
+    "imageUrl": "/images/products/inverters-vfd_cs80-d800.png",
     "youtubeUrl": "https://www.youtube.com/embed/jl-SiwAbb_U",
     "catalogUrl": "/brochures/inverters-vfd-ac-drive_d800_d800-pdf.pdf"
   },
@@ -275,7 +275,7 @@ export const initialProducts = [
       "AI Diagnostics": "Predictive diagnostic engine for fan and capacitors",
       "Temp Window": "-20\u00b0C to +60\u00b0C operating window"
     },
-    "imageUrl": "/images/products/inverters-vfd-ac-drive_e800_image-png.png",
+    "imageUrl": "/images/products/inverters-vfd_e800.png",
     "youtubeUrl": "https://www.youtube.com/embed/jl-SiwAbb_U",
     "catalogUrl": "/brochures/inverters-vfd-ac-drive_e800_e800-pdf.pdf"
   },
@@ -299,7 +299,7 @@ export const initialProducts = [
       "Tripping Unit": "Thermal-magnetic or Electronic trip units",
       "Standards": "IEC, JIS, EN compliance"
     },
-    "imageUrl": "/images/products/low-voltage-circuit-breakers_image-png.png",
+    "imageUrl": "/images/products/low-voltage-switchgear.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "#"
   },
@@ -323,7 +323,7 @@ export const initialProducts = [
       "Positioning Control": "Built-in 3 axes simple positioning",
       "Software": "GX Works2 / GX Developer compatible"
     },
-    "imageUrl": "/images/products/melsec-fx3u-series_cc-link_media_image1.png",
+    "imageUrl": "/images/products/melsec-fx3u_fx3u-80m.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/melsec-fx3u-series_fx3u-catalogue-pdf.pdf"
   },
@@ -347,7 +347,7 @@ export const initialProducts = [
       "Analog Control": "Built-in (2 inputs / 1 output)",
       "Network Links": "Ethernet, RS-485 serial communication"
     },
-    "imageUrl": "/images/products/melsec-fx5u-series_analog-control-module_media_image1.png",
+    "imageUrl": "/images/products/melsec-fx5u_modules.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/melsec-fx5u-series_catalogue-pdf.pdf"
   },
@@ -371,7 +371,7 @@ export const initialProducts = [
       "Multi-CPU Support": "Up to 4 CPUs (PLC, Motion, CNC, Robot)",
       "Network Links": "CC-Link, CC-Link IE TSN, Ethernet, Profibus"
     },
-    "imageUrl": "/images/products/melsec-q-series_cpu-unit-photo.jpg",
+    "imageUrl": "/images/products/melsec-q-series.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/melsec-q-series_catalogue-pdf.pdf"
   },
@@ -395,7 +395,7 @@ export const initialProducts = [
       "Safety Standard": "STO (Safe Torque Off) SIL2 standard",
       "Network Link": "SSCNET III/H fiber optic link"
     },
-    "imageUrl": "/images/products/melservo-ac-servo_melservo-j4_product-image-png.png",
+    "imageUrl": "/images/products/melservo_j4-motor.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/melservo-ac-servo_melservo-j4_catalogue-pdf.pdf"
   },
@@ -419,7 +419,7 @@ export const initialProducts = [
       "Safety Rating": "STO / SS1 / SLS functional safety SIL3",
       "Network Link": "CC-Link IE TSN / Ethernet TSN"
     },
-    "imageUrl": "/images/products/melservo-ac-servo_melservo-j5_product-image.jpg",
+    "imageUrl": "/images/products/melservo_j5-set.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/melservo-ac-servo_melservo-j5_catalogue-pdf.pdf"
   },
@@ -443,7 +443,7 @@ export const initialProducts = [
       "Control Type": "Pulse Train / Analog input control",
       "Voltage Options": "3-Phase 200V / 1-Phase 200V inputs"
     },
-    "imageUrl": "/images/products/melservo-ac-servo_melservo-je_product-image.jpg",
+    "imageUrl": "/images/products/melservo_je-amplifier.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/melservo-ac-servo_melservo-je_catalogue-pdf.pdf"
   },
@@ -491,7 +491,7 @@ export const initialProducts = [
       "Programming": "Structured text, SFC, and ladder diagrams",
       "Module Form": "MELSEC Q / iQ-R series rack compatible"
     },
-    "imageUrl": "/images/products/motion-unit_qd77ms-photo.jpg",
+    "imageUrl": "/images/products/motion-unit_fx5-80ssc.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "/brochures/motion-unit_catalogue-pdf.pdf"
   },
@@ -515,7 +515,7 @@ export const initialProducts = [
       "Simulation": "Off-line PLC / HMI simulation engine",
       "License Options": "Single User / Multi-User Network licenses"
     },
-    "imageUrl": "/images/products/software_gxworks3-screenshot.jpg",
+    "imageUrl": "/images/products/software.png",
     "youtubeUrl": "https://www.youtube.com/embed/iMCk2mJAq14",
     "catalogUrl": "#"
   },

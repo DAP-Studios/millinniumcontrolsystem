@@ -488,8 +488,8 @@ export default function Infrastructure() {
               <a href="/contact" className="infra-cta-btn-primary" id="infra-cta-contact">
                 Request a Visit <ArrowRight size={16} strokeWidth={2.5} />
               </a>
-              <a href="tel:07942656614" className="infra-cta-btn-secondary" id="infra-cta-phone">
-                <Phone size={15} strokeWidth={2} /> 079-42656614
+              <a href="tel:+916356732897" className="infra-cta-btn-secondary" id="infra-cta-phone">
+                <Phone size={15} strokeWidth={2} /> +91 63567 32897
               </a>
             </div>
           </div>
